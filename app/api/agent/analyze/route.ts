@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { openai, DEFAULT_MODEL } from '../../../../lib/openai';
-import { getClientById, Client } from '../../../../lib/clientData';
+import { getClientById } from '../../../../lib/clientData';
+import type { Client } from '../../../../lib/types';
 
 export async function POST(request: NextRequest) {
   try {

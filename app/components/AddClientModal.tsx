@@ -143,7 +143,7 @@ export function AddClientModal({ isOpen, onClose, onClientAdded }: AddClientModa
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData({...formData, status: e.target.value as any})}
+                onChange={(e) => setFormData({...formData, status: e.target.value as 'trial' | 'active' | 'inactive'})}
                 className="w-full px-4 py-3 bg-gray-700 border-2 border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               >
                 <option value="trial">Trial</option>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ClientList } from '../components/ClientList';
 import { ClientDetail } from '../components/ClientDetail';
 import { DashboardStats } from '../components/DashboardStats';
@@ -30,11 +30,35 @@ export default function Dashboard() {
     health: 'all'
   });
 
-  useEffect(() => {
-    if (currentPage === 'dashboard' || currentPage === 'clients') {
-    fetchClients();
+  const fetchClients = useCallback(async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      
+      if (filters.status !== 'all') params.append('status', filters.status);
+      if (filters.health !== 'all') params.append('health', filters.health);
+
+      const response = await fetch(`/api/clients?${params.toString()}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setClients(data.clients);
+        setSummary(data.summary);
+        setError(null);
+      } else {
+        setError(data.error || 'Failed to fetch clients');
+      }
+    } catch (err) {
+      setError('Network error occurred');
+      console.error('Error fetching clients:', err);
+    } finally {
+      setLoading(false);
     }
-  }, [filters, currentPage]);
+  }, [filters]);
+
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
 
   // Close profile dropdown when clicking outside
   useEffect(() => {
@@ -52,32 +76,6 @@ export default function Dashboard() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showProfileDropdown]);
-
-  const fetchClients = async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      
-      if (filters.status !== 'all') params.append('status', filters.status);
-      if (filters.health !== 'all') params.append('health', filters.health);
-
-      const response = await fetch(`/api/clients?${params.toString()}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setClients(data.clients);
-        setSummary(data.summary);
-        setError(null);
-      } else {
-        setError(data.error || 'Failed to fetch clients');
-      }
-    } catch (err) {
-      setError('Network error occurred');
-      console.error('Error fetching clients:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleClientSelect = (client: Client) => {
     setSelectedClient(client);

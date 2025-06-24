@@ -84,45 +84,6 @@ export function Sidebar({ currentPage, onPageChange, isCollapsed: externalCollap
     }
   ];
 
-  const integrationItems = [
-    {
-      id: 'slack',
-      label: 'Slack',
-      icon: '💬',
-      status: 'available'
-    },
-    {
-      id: 'clickup',
-      label: 'ClickUp',
-      icon: '✅',
-      status: 'available'
-    },
-    {
-      id: 'google',
-      label: 'Google Workspace',
-      icon: '📧',
-      status: 'available'
-    },
-    {
-      id: 'hubspot',
-      label: 'HubSpot',
-      icon: '🎯',
-      status: 'coming-soon'
-    },
-    {
-      id: 'salesforce',
-      label: 'Salesforce',
-      icon: '☁️',
-      status: 'coming-soon'
-    },
-    {
-      id: 'intercom',
-      label: 'Intercom',
-      icon: '💭',
-      status: 'coming-soon'
-    }
-  ];
-
   return (
     <div className={`sidebar bg-white h-screen flex flex-col transition-all duration-300 ${
       isCollapsed ? 'w-16' : 'w-64'

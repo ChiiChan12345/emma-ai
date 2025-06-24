@@ -12,10 +12,10 @@ interface DocumentSection {
 }
 
 interface HelpCenterProps {
-  initialSection?: string;
+  // Future expansion props can go here
 }
 
-const HelpCenter = ({ initialSection }: HelpCenterProps) => {
+const HelpCenter = ({}: HelpCenterProps) => {
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 

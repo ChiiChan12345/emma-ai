@@ -1,4 +1,4 @@
-import { Client, Filters, ClientListProps } from '../../lib/types';
+import { Client, ClientListProps } from '../../lib/types';
 
 interface ExtendedClientListProps extends ClientListProps {
   loading?: boolean;
@@ -12,12 +12,6 @@ export function ClientList({ clients, filters, onFilterChange, onClientSelect, l
       case 'critical': return 'text-red-100 bg-red-800 border-red-600';
       default: return 'text-gray-300 bg-gray-700 border-gray-600';
     }
-  };
-
-  const getHealthScoreColor = (score: number) => {
-    if (score >= 70) return 'text-green-200 bg-green-800 border-green-600';
-    if (score >= 40) return 'text-yellow-200 bg-yellow-800 border-yellow-600';
-    return 'text-red-200 bg-red-800 border-red-600';
   };
 
   const getStatusColor = (status: string) => {

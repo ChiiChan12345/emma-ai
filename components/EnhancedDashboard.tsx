@@ -75,7 +75,7 @@ export function EnhancedDashboard() {
     // DesignSystem.initializeAccessibility();
   }, [initializeDashboard]);
 
-  const generateAIInsights = async (clientData: Client[]) => {
+  const generateAIInsights = async (clientData: unknown[]) => {
     try {
       const insights: AIInsights = {
         churnRisk: {
@@ -95,14 +95,32 @@ export function EnhancedDashboard() {
       let totalChurnRisk = 0;
       const riskFactors: string[] = [];
       
-      for (const client of clientData) {
-        const churnAnalysis = await AIAnalytics.predictChurnRisk({
-          healthScore: client.healthScore,
-          usage: client.usage,
-          lastActivity: client.lastActivity,
-          contractValue: client.contractValue,
-          status: client.status
-        });
+      for (const clientItem of clientData) {
+        const client = clientItem as {
+          healthScore: number;
+          usage: { currentMonth: number; lastMonth: number; limit: number; };
+          lastActivity: string;
+          contractValue: number;
+          status: 'active' | 'inactive' | 'trial' | 'churned';
+        };
+        
+        // Create a mock Client object for the AI analysis
+        const mockClient = {
+          id: 'temp',
+          name: 'Client',
+          email: 'client@example.com',
+          company: 'Company',
+          joinDate: '2024-01-01',
+          plan: 'Pro',
+          health: 'healthy' as const,
+          communications: [],
+          tags: [],
+          notes: '',
+          nextRenewal: '2025-01-01',
+          ...client
+        };
+        
+        const churnAnalysis = await AIAnalytics.predictChurnRisk(mockClient);
         
         totalChurnRisk += churnAnalysis.churnProbability;
         riskFactors.push(...churnAnalysis.keyRiskFactors);
@@ -115,7 +133,15 @@ export function EnhancedDashboard() {
       insights.churnRisk.factors = [...new Set(riskFactors)].slice(0, 5);
 
       // Analyze health trends
-      const healthCounts = clientData.reduce((acc, client) => {
+      const healthCounts = clientData.reduce((acc: { improving: number; declining: number; stable: number }, clientItem) => {
+        const client = clientItem as {
+          healthScore: number;
+          usage: { currentMonth: number; lastMonth: number; limit: number; };
+          lastActivity: string;
+          contractValue: number;
+          status: 'active' | 'inactive' | 'trial' | 'churned';
+        };
+        
         if (client.healthScore > 80) acc.improving++;
         else if (client.healthScore < 60) acc.declining++;
         else acc.stable++;

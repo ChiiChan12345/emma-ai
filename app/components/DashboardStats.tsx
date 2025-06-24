@@ -19,44 +19,6 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ summary }: DashboardStatsProps) {
-  const getHealthColor = (health: string) => {
-    switch (health) {
-      case 'healthy': return 'text-green-200 border-green-500';
-      case 'at-risk': return 'text-yellow-200 border-yellow-500';
-      case 'critical': return 'text-red-200 border-red-500';
-      default: return 'text-slate-200 border-gray-500';
-    }
-  };
-
-  const getHealthBgColor = (health: string) => {
-    switch (health) {
-      case 'healthy': return { backgroundColor: '#064e3b', borderColor: '#10b981' };
-      case 'at-risk': return { backgroundColor: '#78350f', borderColor: '#f59e0b' };
-      case 'critical': return { backgroundColor: '#7f1d1d', borderColor: '#ef4444' };
-      default: return { backgroundColor: '#374151', borderColor: '#6b7280' };
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'text-green-200 border-green-500';
-      case 'trial': return 'text-blue-200 border-blue-500';
-      case 'inactive': return 'text-slate-200 border-gray-500';
-      case 'churned': return 'text-red-200 border-red-500';
-      default: return 'text-slate-200 border-gray-500';
-    }
-  };
-
-  const getStatusBgColor = (status: string) => {
-    switch (status) {
-      case 'active': return { backgroundColor: '#064e3b', borderColor: '#10b981' };
-      case 'trial': return { backgroundColor: '#1e3a8a', borderColor: '#3b82f6' };
-      case 'inactive': return { backgroundColor: '#374151', borderColor: '#6b7280' };
-      case 'churned': return { backgroundColor: '#7f1d1d', borderColor: '#ef4444' };
-      default: return { backgroundColor: '#374151', borderColor: '#6b7280' };
-    }
-  };
-
   // Calculate percentages for better insights
   const totalActiveClients = summary.byStatus.active + summary.byStatus.trial;
   const healthyPercentage = summary.total > 0 ? Math.round((summary.byHealth.healthy / summary.total) * 100) : 0;
@@ -254,53 +216,6 @@ export function DashboardStats({ summary }: DashboardStatsProps) {
               );
             })}
           </div>
-        </div>
-      </div>
-
-      {/* Quick Actions Bar */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl shadow-lg p-6 border border-gray-600">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white">Quick Actions</h3>
-          <div className="text-sm text-slate-300 bg-gray-700 px-3 py-1 rounded-full border border-gray-600">
-            Shortcuts
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg border border-blue-500/20 hover:border-blue-500/40 hover:bg-gray-700 transition-all duration-200 group">
-            <div className="w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center mb-2 group-hover:bg-blue-600/30 transition-all duration-200">
-              <svg className="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </div>
-            <span className="text-sm font-medium text-white group-hover:text-blue-200 transition-colors duration-200">Add Client</span>
-          </button>
-          
-          <button className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg border border-green-500/20 hover:border-green-500/40 hover:bg-gray-700 transition-all duration-200 group">
-            <div className="w-8 h-8 bg-green-600/20 rounded-lg flex items-center justify-center mb-2 group-hover:bg-green-600/30 transition-all duration-200">
-              <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <span className="text-sm font-medium text-white group-hover:text-green-200 transition-colors duration-200">Health Check</span>
-          </button>
-          
-          <button className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg border border-purple-500/20 hover:border-purple-500/40 hover:bg-gray-700 transition-all duration-200 group">
-            <div className="w-8 h-8 bg-purple-600/20 rounded-lg flex items-center justify-center mb-2 group-hover:bg-purple-600/30 transition-all duration-200">
-              <svg className="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-            </div>
-            <span className="text-sm font-medium text-white group-hover:text-purple-200 transition-colors duration-200">Send Message</span>
-          </button>
-          
-          <button className="flex flex-col items-center p-4 bg-gray-700/50 rounded-lg border border-orange-500/20 hover:border-orange-500/40 hover:bg-gray-700 transition-all duration-200 group">
-            <div className="w-8 h-8 bg-orange-600/20 rounded-lg flex items-center justify-center mb-2 group-hover:bg-orange-600/30 transition-all duration-200">
-              <svg className="w-4 h-4 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <span className="text-sm font-medium text-white group-hover:text-orange-200 transition-colors duration-200">Generate Report</span>
-          </button>
         </div>
       </div>
     </div>

@@ -476,8 +476,12 @@ export class ErrorHandler {
           state = 'OPEN';
           this.logger.warn(
             'Circuit breaker opened due to repeated failures',
-            error instanceof Error ? error : new Error(String(error)),
-            { state, failures, maxFailures },
+            { 
+              state, 
+              failures, 
+              maxFailures, 
+              error: error instanceof Error ? error.message : String(error) 
+            },
             component
           );
         }

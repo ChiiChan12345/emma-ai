@@ -695,8 +695,8 @@ Best,
           
           <div className="flex space-x-3 pt-4">
             <button
-              onClick={() => selectedTemplate && handleSendEmail(selectedTemplate, ['demo@example.com'])}
-              disabled={loading || !selectedTemplate}
+              onClick={() => handleSendEmail(selectedTemplate, ['demo@example.com'])}
+              disabled={loading}
               className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             >
               {loading ? (
@@ -1296,3 +1296,199 @@ Best,
   );
 }
 
+    const communication = communicationDetailsModal.communication;
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 rounded-xl max-w-2xl w-full border border-gray-600">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-white">Communication Details</h3>
+              <button
+                onClick={() => setCommunicationDetailsModal({ isOpen: false, communication: null })}
+                className="text-gray-400 hover:text-white p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Client</label>
+                <p className="text-white">{communication.clientName}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Type</label>
+                <p className="text-white capitalize">{communication.type}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Subject</label>
+                <p className="text-white">{communication.subject}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Content</label>
+                <div className="bg-gray-700 rounded-lg p-4 text-white whitespace-pre-wrap">
+                  {communication.content}
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                  communication.status === 'sent' ? 'bg-blue-800 text-blue-100' :
+                  communication.status === 'delivered' ? 'bg-green-800 text-green-100' :
+                  communication.status === 'opened' ? 'bg-yellow-800 text-yellow-100' :
+                  communication.status === 'replied' ? 'bg-purple-800 text-purple-100' :
+                  'bg-red-800 text-red-100'
+                }`}>
+                  {communication.status}
+                </span>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Sent At</label>
+                <p className="text-white">{new Date(communication.sentAt).toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 bg-gray-800 p-1 rounded-lg border border-gray-600">
+        {['templates', 'send', 'history', 'automation'].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab as any)}
+            className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeTab === tab
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-gray-300 hover:text-white hover:bg-gray-700'
+            }`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'templates' && renderTemplatesTab()}
+      {activeTab === 'send' && renderSendTab()}
+      {activeTab === 'history' && renderHistoryTab()}
+      {activeTab === 'automation' && renderAutomationTab()}
+
+      {/* Modals */}
+      {renderCreateTemplateModal()}
+      {renderTemplateUsageModal()}
+      {renderCommunicationDetailsModal()}
+    </div>
+  );
+}
+        c o n s t   c o m m u n i c a t i o n   =   c o m m u n i c a t i o n D e t a i l s M o d a l . c o m m u n i c a t i o n ;  
+ 
+    const communication = communicationDetailsModal.communication;
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 rounded-xl max-w-2xl w-full border border-gray-600">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-white">Communication Details</h3>
+              <button
+                onClick={() => setCommunicationDetailsModal({ isOpen: false, communication: null })}
+                className="text-gray-400 hover:text-white p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Client</label>
+                <p className="text-white">{communication.clientName}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Type</label>
+                <p className="text-white capitalize">{communication.type}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Subject</label>
+                <p className="text-white">{communication.subject}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Content</label>
+                <div className="bg-gray-700 rounded-lg p-4 text-white whitespace-pre-wrap">
+                  {communication.content}
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                  communication.status === 'sent' ? 'bg-blue-800 text-blue-100' :
+                  communication.status === 'delivered' ? 'bg-green-800 text-green-100' :
+                  communication.status === 'opened' ? 'bg-yellow-800 text-yellow-100' :
+                  communication.status === 'replied' ? 'bg-purple-800 text-purple-100' :
+                  'bg-red-800 text-red-100'
+                }`}>
+                  {communication.status}
+                </span>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Sent At</label>
+                <p className="text-white">{new Date(communication.sentAt).toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 bg-gray-800 p-1 rounded-lg border border-gray-600">
+        {['templates', 'send', 'history', 'automation'].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab as any)}
+            className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeTab === tab
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-gray-300 hover:text-white hover:bg-gray-700'
+            }`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'templates' && renderTemplatesTab()}
+      {activeTab === 'send' && renderSendTab()}
+      {activeTab === 'history' && renderHistoryTab()}
+      {activeTab === 'automation' && renderAutomationTab()}
+
+      {/* Modals */}
+      {renderCreateTemplateModal()}
+      {renderTemplateUsageModal()}
+      {renderCommunicationDetailsModal()}
+    </div>
+  );
+}

@@ -22,22 +22,22 @@ export async function GET(request: NextRequest) {
 
     // Apply sorting
     clients.sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
+      let aValue: string | number;
+      let bValue: string | number;
 
       // Handle nested properties like usage.currentMonth
       if (sortBy.includes('.')) {
         const keys = sortBy.split('.');
-        aValue = keys.reduce((obj: any, key) => obj?.[key], a);
-        bValue = keys.reduce((obj: any, key) => obj?.[key], b);
+        aValue = keys.reduce((obj: unknown, key) => (obj as Record<string, unknown>)?.[key], a as unknown) as string | number;
+        bValue = keys.reduce((obj: unknown, key) => (obj as Record<string, unknown>)?.[key], b as unknown) as string | number;
       } else {
-        aValue = (a as any)[sortBy];
-        bValue = (b as any)[sortBy];
+        aValue = (a as unknown as Record<string, unknown>)[sortBy] as string | number;
+        bValue = (b as unknown as Record<string, unknown>)[sortBy] as string | number;
       }
 
       if (typeof aValue === 'string') {
         aValue = aValue.toLowerCase();
-        bValue = bValue.toLowerCase();
+        bValue = (bValue as string).toLowerCase();
       }
 
       if (sortOrder === 'desc') {

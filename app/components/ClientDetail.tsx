@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Client, ClientDetailProps } from '../../lib/types';
+import { ClientDetailProps } from '../../lib/types';
 
 export function ClientDetail({ client, onBack }: ClientDetailProps) {
   const [analysis, setAnalysis] = useState<string | null>(null);

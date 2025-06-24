@@ -1,5 +1,8 @@
 import { Client } from './types';
 
+// Re-export Client type for convenience
+export type { Client } from './types';
+
 // Health scoring logic - explains how tags are determined
 export function calculateHealthScore(client: Client): number {
   let score = 100;
