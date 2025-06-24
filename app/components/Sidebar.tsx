@@ -77,16 +77,10 @@ export function Sidebar({ currentPage, onPageChange, isCollapsed: externalCollap
       description: 'Documentation & Resources'
     },
     {
-      id: 'help-center',
-      label: 'Help Center',
-      icon: '❓',
-      description: 'FAQs & Support'
-    },
-    {
-      id: 'tutorials',
-      label: 'Tutorials',
-      icon: '🎓',
-      description: 'Learning Resources'
+      id: 'submit-request',
+      label: 'Submit Request',
+      icon: '📧',
+      description: 'Get Help & Support'
     }
   ];
 

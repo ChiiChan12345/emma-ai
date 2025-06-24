@@ -10,6 +10,7 @@ import { IntegrationsPage } from '../components/IntegrationsPage';
 import { AppSettingsPage } from '../components/AppSettingsPage';
 import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
 import CommunicationsHub from '../../components/CommunicationsHub';
+import HelpCenter from '../components/HelpCenter';
 import { Client, Summary, Filters } from '../../lib/types';
 
 export default function Dashboard() {
@@ -254,11 +255,25 @@ export default function Dashboard() {
                 </button>
                 <button
                   onClick={() => setShowAddClientModal(true)}
-                  className="p-4 border border-gray-600 rounded-lg hover:bg-gray-700 text-left transition-colors"
+                  className="group relative p-4 border-2 border-green-500/30 bg-gradient-to-br from-green-600/10 to-emerald-600/10 rounded-lg hover:from-green-600/20 hover:to-emerald-600/20 hover:border-green-400/50 text-left transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
                 >
-                  <div className="text-green-400 text-2xl mb-2">➕</div>
-                  <div className="font-medium text-white">Add New Client</div>
-                  <div className="text-sm text-slate-200">Onboard a new client</div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 to-emerald-400/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-green-400 text-2xl">✨</div>
+                      <div className="bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded-full font-medium">
+                        New
+                      </div>
+                    </div>
+                    <div className="font-semibold text-white mb-1">Add New Client</div>
+                    <div className="text-sm text-slate-200">Onboard a new client quickly</div>
+                    <div className="mt-3 flex items-center text-green-300 text-sm font-medium">
+                      <span>Get started</span>
+                      <svg className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
+                  </div>
                 </button>
                 <button
                   onClick={() => setCurrentPage('analytics')}
@@ -368,16 +383,27 @@ export default function Dashboard() {
         // Show detailed client database
         return (
           <div className="p-6">
-            <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-gray-900">Client Management</h2>
+            <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Client Management</h2>
+                <p className="text-gray-600 mt-1">Manage your client relationships and track their success</p>
+              </div>
               <button
                 onClick={() => setShowAddClientModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2"
+                className="group relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center space-x-2 border border-blue-500/20"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                <span>Add Client</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex items-center space-x-2">
+                  <div className="bg-white/20 rounded-lg p-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  </div>
+                  <span>Add Client</span>
+                  <div className="bg-blue-400/30 text-blue-100 text-xs px-2 py-1 rounded-full font-medium">
+                    Quick
+                  </div>
+                </div>
               </button>
             </div>
             <ClientList 
@@ -933,16 +959,56 @@ export default function Dashboard() {
         return (
           <div className="p-6">
             <h1 className="text-2xl font-bold text-white mb-6">Automation & Workflows</h1>
-            <div className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-xl border border-gray-600 p-12 text-center shadow-sm">
-              <div className="text-6xl mb-6">🤖</div>
-              <h3 className="text-2xl font-semibold text-white mb-4">Smart Automation</h3>
-              <p className="text-slate-200 mb-8 max-w-md mx-auto">Set up automated workflows for client success and streamline your customer management processes</p>
-              <button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2 mx-auto">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                <span>Create Workflow</span>
-              </button>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Workflow Templates */}
+              <div className="bg-gray-800 rounded-xl border border-gray-600 p-6">
+                <h3 className="text-xl font-semibold text-white mb-4">Workflow Templates</h3>
+                <div className="space-y-4">
+                  <div className="border border-gray-600 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-white">New Client Onboarding</h4>
+                      <span className="px-2 py-1 bg-green-600 text-white text-xs rounded">Active</span>
+                    </div>
+                    <p className="text-slate-200 text-sm mb-2">Automated welcome sequence for new clients</p>
+                    <div className="text-xs text-slate-400">5 steps • 2 weeks duration</div>
+                  </div>
+                  <div className="border border-gray-600 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-white">At-Risk Client Intervention</h4>
+                      <span className="px-2 py-1 bg-yellow-600 text-white text-xs rounded">Draft</span>
+                    </div>
+                    <p className="text-slate-200 text-sm mb-2">Proactive outreach for declining health scores</p>
+                    <div className="text-xs text-slate-400">3 steps • Triggered by health score</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Automation Rules */}
+              <div className="bg-gray-800 rounded-xl border border-gray-600 p-6">
+                <h3 className="text-xl font-semibold text-white mb-4">Automation Rules</h3>
+                <div className="space-y-4">
+                  <div className="border border-gray-600 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-white">Health Score Alerts</h4>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" className="sr-only peer" defaultChecked />
+                        <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                    <p className="text-slate-200 text-sm">Notify when client health drops below 60</p>
+                  </div>
+                  <div className="border border-gray-600 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-white">Renewal Reminders</h4>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" className="sr-only peer" defaultChecked />
+                        <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+                    <p className="text-slate-200 text-sm">Send reminders 30 days before renewal</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -957,220 +1023,101 @@ export default function Dashboard() {
         return <ProfileSettingsPage />;
 
       case 'knowledge-base':
+        return <HelpCenter />;
+
+      case 'submit-request':
         return (
           <div className="p-6">
-            <h1 className="text-2xl font-bold text-white mb-6">Knowledge Base</h1>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {/* Documentation Section */}
-              <div className="bg-gray-800 rounded-xl border border-gray-600 p-6 hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="text-3xl">📖</div>
-                  <h3 className="text-xl font-semibold text-white">Documentation</h3>
+            <div className="max-w-2xl mx-auto">
+              <div className="bg-white rounded-xl border border-gray-200 p-8">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-white text-2xl">📧</span>
+                  </div>
+                  <h1 className="text-2xl font-bold text-gray-900 mb-2">Submit Support Request</h1>
+                  <p className="text-gray-600">Get help from our customer success team</p>
                 </div>
-                <p className="text-slate-200 mb-4">Complete guides and API documentation for Emma AI platform</p>
-                <div className="space-y-2">
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    Getting Started Guide
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    API Reference
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    Best Practices
-                  </button>
-                </div>
-              </div>
 
-              {/* Best Practices Section */}
-              <div className="bg-gray-800 rounded-xl border border-gray-600 p-6 hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="text-3xl">💡</div>
-                  <h3 className="text-xl font-semibold text-white">Best Practices</h3>
-                </div>
-                <p className="text-slate-200 mb-4">Proven strategies for customer success management</p>
-                <div className="space-y-2">
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    Client Onboarding
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    Health Score Optimization
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    Renewal Strategies
-                  </button>
-                </div>
-              </div>
+                <form className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Request Type
+                    </label>
+                    <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      <option>Technical Support</option>
+                      <option>Feature Request</option>
+                      <option>Account Question</option>
+                      <option>Integration Help</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
 
-              {/* Troubleshooting Section */}
-              <div className="bg-gray-800 rounded-xl border border-gray-600 p-6 hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="text-3xl">🔧</div>
-                  <h3 className="text-xl font-semibold text-white">Troubleshooting</h3>
-                </div>
-                <p className="text-slate-200 mb-4">Common issues and their solutions</p>
-                <div className="space-y-2">
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    Integration Issues
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    Data Sync Problems
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-lg transition-colors">
-                    Performance Issues
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Subject
+                    </label>
+                    <input 
+                      type="text" 
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Brief description of your request"
+                    />
+                  </div>
 
-      case 'help-center':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-white mb-6">Help Center</h1>
-            <div className="max-w-4xl mx-auto">
-              {/* Search Bar */}
-              <div className="mb-8">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search for help articles..."
-                    className="w-full px-4 py-3 pl-12 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <svg className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
+                    <textarea 
+                      rows={6}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Please provide detailed information about your request..."
+                    ></textarea>
+                  </div>
 
-              {/* FAQ Categories */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-gray-800 rounded-xl border border-gray-600 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center space-x-2">
-                    <span className="text-2xl">❓</span>
-                    <span>Frequently Asked Questions</span>
-                  </h3>
-                  <div className="space-y-3">
-                    <button className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-gray-700 rounded-lg transition-colors">
-                      How do I add a new client?
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Priority
+                    </label>
+                    <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      <option>Low</option>
+                      <option>Medium</option>
+                      <option>High</option>
+                      <option>Urgent</option>
+                    </select>
+                  </div>
+
+                  <div className="flex space-x-4">
+                    <button
+                      type="submit"
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:shadow-lg transition-all duration-200"
+                    >
+                      Submit Request
                     </button>
-                    <button className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-gray-700 rounded-lg transition-colors">
-                      How to set up automated workflows?
-                    </button>
-                    <button className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-gray-700 rounded-lg transition-colors">
-                      Understanding health scores
-                    </button>
-                    <button className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-gray-700 rounded-lg transition-colors">
-                      Managing integrations
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage('knowledge-base')}
+                      className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                    >
+                      Browse Help
                     </button>
                   </div>
-                </div>
+                </form>
 
-                <div className="bg-gray-800 rounded-xl border border-gray-600 p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center space-x-2">
-                    <span className="text-2xl">📞</span>
-                    <span>Contact Support</span>
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3 text-slate-200">
-                      <span className="text-lg">✉️</span>
-                      <span className="text-sm">support@emma-ai.com</span>
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <div className="text-center text-sm text-gray-600">
+                    <p>Need immediate help? Contact us directly:</p>
+                    <div className="flex justify-center space-x-6 mt-2">
+                      <span className="flex items-center space-x-1">
+                        <span>📞</span>
+                        <span>1-800-EMMA-AI</span>
+                      </span>
+                      <span className="flex items-center space-x-1">
+                        <span>💬</span>
+                        <span>Live Chat</span>
+                      </span>
                     </div>
-                    <div className="flex items-center space-x-3 text-slate-200">
-                      <span className="text-lg">💬</span>
-                      <span className="text-sm">Live Chat (9 AM - 5 PM EST)</span>
-                    </div>
-                    <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200">
-                      Start Live Chat
-                    </button>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'tutorials':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-white mb-6">Tutorials & Learning</h1>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {/* Getting Started */}
-              <div className="bg-gray-800 rounded-xl border border-gray-600 p-6 hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="text-3xl">🚀</div>
-                  <h3 className="text-xl font-semibold text-white">Getting Started</h3>
-                </div>
-                <p className="text-slate-200 mb-4">Learn the basics of Emma AI in under 10 minutes</p>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-green-400">●</span>
-                    <span>5 min - Platform Overview</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-green-400">●</span>
-                    <span>3 min - Adding Your First Client</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-yellow-400">●</span>
-                    <span>2 min - Dashboard Navigation</span>
-                  </div>
-                </div>
-                <button className="w-full mt-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
-                  Start Tutorial
-                </button>
-              </div>
-
-              {/* Advanced Features */}
-              <div className="bg-gray-800 rounded-xl border border-gray-600 p-6 hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="text-3xl">⚡</div>
-                  <h3 className="text-xl font-semibold text-white">Advanced Features</h3>
-                </div>
-                <p className="text-slate-200 mb-4">Master automation and advanced analytics</p>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-blue-400">●</span>
-                    <span>8 min - Workflow Automation</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-blue-400">●</span>
-                    <span>6 min - Custom Analytics</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-gray-400">●</span>
-                    <span>4 min - API Integration</span>
-                  </div>
-                </div>
-                <button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
-                  View Tutorials
-                </button>
-              </div>
-
-              {/* Video Library */}
-              <div className="bg-gray-800 rounded-xl border border-gray-600 p-6 hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="text-3xl">🎥</div>
-                  <h3 className="text-xl font-semibold text-white">Video Library</h3>
-                </div>
-                <p className="text-slate-200 mb-4">Watch step-by-step video guides</p>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-red-400">●</span>
-                    <span>12 Tutorial Videos</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-red-400">●</span>
-                    <span>5 Webinar Recordings</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-300">
-                    <span className="text-red-400">●</span>
-                    <span>3 Feature Demos</span>
-                  </div>
-                </div>
-                <button className="w-full mt-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200">
-                  Browse Videos
-                </button>
               </div>
             </div>
           </div>
