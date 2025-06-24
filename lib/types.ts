@@ -54,6 +54,7 @@ export interface ClientListProps {
   onClientSelect: (client: Client) => void;
   filters: Filters;
   onFilterChange: (filters: Partial<Filters>) => void;
+  loading?: boolean;
 }
 
 export interface ClientDetailProps {

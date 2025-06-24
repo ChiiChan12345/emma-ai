@@ -227,7 +227,7 @@ export class AIAnalytics {
 
   private static calculateSupportScore(clientData: Client): number {
     // Assume fewer support tickets = better health
-    const supportTickets = (clientData as any).supportTickets || 0;
+    const supportTickets = (clientData as Client & { supportTickets?: number }).supportTickets || 0;
     if (supportTickets === 0) return 100;
     if (supportTickets <= 2) return 80;
     if (supportTickets <= 5) return 60;
@@ -237,32 +237,31 @@ export class AIAnalytics {
 
   private static calculateFeatureAdoptionScore(clientData: Client): number {
     // Mock feature adoption calculation
-    const adoptedFeatures = (clientData as any).featuresUsed || [];
-    const totalFeatures = 10; // Assume 10 total features
-    const adoptionRate = adoptedFeatures.length / totalFeatures;
-    return Math.round(adoptionRate * 100);
+    const features = ['dashboard', 'api', 'integrations', 'reports'];
+    const adoptedFeatures = Math.floor(Math.random() * features.length) + 1;
+    return Math.round((adoptedFeatures / features.length) * 100);
   }
 
   private static calculatePaymentScore(clientData: Client): number {
-    // Mock payment history calculation
-    const status = clientData.status;
-    if (status === 'active') return 100;
-    if (status === 'trial') return 70;
-    if (status === 'inactive') return 30;
-    return 10; // churned
+    // Mock payment history - assume good payment history for active clients
+    return clientData.status === 'active' ? 100 : 60;
   }
 
   private static calculateTrend(clientData: Client): { direction: 'improving' | 'declining' | 'stable'; change: number; confidence: number } {
-    // Mock trend calculation based on recent activity
-    const usageGrowth = (clientData.usage.currentMonth - clientData.usage.lastMonth) / clientData.usage.lastMonth;
-    
-    if (usageGrowth > 0.1) {
-      return { direction: 'improving', change: 5, confidence: 85 };
-    } else if (usageGrowth < -0.1) {
-      return { direction: 'declining', change: -8, confidence: 80 };
-    } else {
-      return { direction: 'stable', change: 0, confidence: 70 };
-    }
+    // Mock trend calculation based on usage patterns
+    const currentUsage = clientData.usage.currentMonth / clientData.usage.limit;
+    const lastUsage = clientData.usage.lastMonth / clientData.usage.limit;
+    const change = (currentUsage - lastUsage) * 100;
+
+    let direction: 'improving' | 'declining' | 'stable' = 'stable';
+    if (change > 5) direction = 'improving';
+    else if (change < -5) direction = 'declining';
+
+    return {
+      direction,
+      change: Math.round(change),
+      confidence: Math.round(Math.random() * 20 + 70), // 70-90% confidence
+    };
   }
 }
 

@@ -34,6 +34,41 @@ interface AutomationRule {
   lastTriggered?: string;
 }
 
+// New interfaces for enhanced functionality
+interface TemplateUsageModal {
+  isOpen: boolean;
+  template: EmailTemplate | null;
+  recipients: string;
+  customSubject: string;
+  customContent: string;
+}
+
+interface CommunicationDetailsModal {
+  isOpen: boolean;
+  communication: CommunicationRecord | null;
+}
+
+interface CreateRuleModal {
+  isOpen: boolean;
+  ruleName: string;
+  triggerType: string;
+  triggerCondition: string;
+  triggerValue: string;
+  actionType: string;
+  actionTemplate: string;
+  actionDelay: number;
+}
+
+interface CreateTemplateModal {
+  isOpen: boolean;
+  templateName: string;
+  templateType: 'welcome' | 'follow-up' | 'renewal' | 'churn-prevention' | 'check-in' | 'custom';
+  subject: string;
+  content: string;
+  variables: string[];
+  newVariable: string;
+}
+
 const getTemplateTypeColor = (type: string) => {
   const colors = {
     'welcome': 'bg-emerald-100 text-emerald-800 border-emerald-200',
@@ -54,6 +89,41 @@ export default function CommunicationsHub() {
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Enhanced modal states
+  const [templateUsageModal, setTemplateUsageModal] = useState<TemplateUsageModal>({
+    isOpen: false,
+    template: null,
+    recipients: '',
+    customSubject: '',
+    customContent: ''
+  });
+
+  const [communicationDetailsModal, setCommunicationDetailsModal] = useState<CommunicationDetailsModal>({
+    isOpen: false,
+    communication: null
+  });
+
+  const [createRuleModal, setCreateRuleModal] = useState<CreateRuleModal>({
+    isOpen: false,
+    ruleName: '',
+    triggerType: 'health_score',
+    triggerCondition: 'below',
+    triggerValue: '',
+    actionType: 'email',
+    actionTemplate: '',
+    actionDelay: 0
+  });
+
+  const [createTemplateModal, setCreateTemplateModal] = useState<CreateTemplateModal>({
+    isOpen: false,
+    templateName: '',
+    templateType: 'custom',
+    subject: '',
+    content: '',
+    variables: [],
+    newVariable: ''
+  });
 
   // Initialize with default templates
   useEffect(() => {
@@ -296,12 +366,233 @@ Best,
     );
   };
 
+  // Enhanced handler functions
+  const handleUseTemplate = (template: EmailTemplate) => {
+    setTemplateUsageModal({
+      isOpen: true,
+      template,
+      recipients: '',
+      customSubject: template.subject,
+      customContent: template.content
+    });
+  };
+
+  const handleViewCommunicationDetails = (communication: CommunicationRecord) => {
+    setCommunicationDetailsModal({
+      isOpen: true,
+      communication
+    });
+  };
+
+  const handleCreateAutomationRule = () => {
+    setCreateRuleModal({
+      isOpen: true,
+      ruleName: '',
+      triggerType: 'health_score',
+      triggerCondition: 'below',
+      triggerValue: '',
+      actionType: 'email',
+      actionTemplate: '',
+      actionDelay: 0
+    });
+  };
+
+  const handleSendTemplateEmail = async () => {
+    if (!templateUsageModal.template || !templateUsageModal.recipients) return;
+    
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Add to communications history
+      const newCommunication: CommunicationRecord = {
+        id: Date.now().toString(),
+        clientId: 'demo',
+        clientName: templateUsageModal.recipients.split(',')[0] || 'Demo Client',
+        type: 'email',
+        subject: templateUsageModal.customSubject,
+        content: templateUsageModal.customContent,
+        status: 'sent',
+        sentAt: new Date().toISOString()
+      };
+      
+      setCommunications(prev => [newCommunication, ...prev]);
+      setTemplateUsageModal({ isOpen: false, template: null, recipients: '', customSubject: '', customContent: '' });
+      setActiveTab('history');
+    } catch (error) {
+      console.error('Failed to send email:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveAutomationRule = () => {
+    if (!createRuleModal.ruleName || !createRuleModal.triggerValue) return;
+    
+    const newRule: AutomationRule = {
+      id: Date.now().toString(),
+      name: createRuleModal.ruleName,
+      trigger: `${createRuleModal.triggerType} ${createRuleModal.triggerCondition} ${createRuleModal.triggerValue}`,
+      action: `Send ${createRuleModal.actionType} ${createRuleModal.actionTemplate ? `using template ${createRuleModal.actionTemplate}` : ''}`,
+      isActive: true
+    };
+    
+    setAutomationRules(prev => [...prev, newRule]);
+    setCreateRuleModal({
+      isOpen: false,
+      ruleName: '',
+      triggerType: 'health_score',
+      triggerCondition: 'below',
+      triggerValue: '',
+      actionType: 'email',
+      actionTemplate: '',
+      actionDelay: 0
+    });
+  };
+
+  const handleOpenCreateTemplateModal = () => {
+    setCreateTemplateModal({
+      isOpen: true,
+      templateName: '',
+      templateType: 'custom',
+      subject: '',
+      content: '',
+      variables: [],
+      newVariable: ''
+    });
+  };
+
+  const handleSaveTemplate = () => {
+    if (!createTemplateModal.templateName || !createTemplateModal.subject || !createTemplateModal.content) return;
+    
+    const newTemplate: EmailTemplate = {
+      id: Date.now().toString(),
+      name: createTemplateModal.templateName,
+      type: createTemplateModal.templateType,
+      subject: createTemplateModal.subject,
+      content: createTemplateModal.content,
+      variables: createTemplateModal.variables
+    };
+    
+    setTemplates(prev => [...prev, newTemplate]);
+    setCreateTemplateModal({
+      isOpen: false,
+      templateName: '',
+      templateType: 'custom',
+      subject: '',
+      content: '',
+      variables: [],
+      newVariable: ''
+    });
+  };
+
+  const handleAddVariable = () => {
+    if (!createTemplateModal.newVariable || createTemplateModal.variables.includes(createTemplateModal.newVariable)) return;
+    
+    setCreateTemplateModal(prev => ({
+      ...prev,
+      variables: [...prev.variables, prev.newVariable],
+      newVariable: ''
+    }));
+  };
+
+  const handleRemoveVariable = (variable: string) => {
+    setCreateTemplateModal(prev => ({
+      ...prev,
+      variables: prev.variables.filter(v => v !== variable)
+    }));
+  };
+
+  const handleInsertVariable = (variable: string) => {
+    const textarea = document.getElementById('template-content') as HTMLTextAreaElement;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const currentContent = createTemplateModal.content;
+      const newContent = currentContent.substring(0, start) + `{{${variable}}}` + currentContent.substring(end);
+      
+      setCreateTemplateModal(prev => ({ ...prev, content: newContent }));
+      
+      // Restore cursor position
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + variable.length + 4, start + variable.length + 4);
+      }, 0);
+    }
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        const imageTag = `<img src="${imageUrl}" alt="Uploaded image" style="max-width: 100%; height: auto;" />`;
+        
+        setCreateTemplateModal(prev => ({
+          ...prev,
+          content: prev.content + '\n\n' + imageTag
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const applyTextFormatting = (format: string) => {
+    const textarea = document.getElementById('template-content') as HTMLTextAreaElement;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = textarea.value.substring(start, end);
+      const currentContent = createTemplateModal.content;
+      
+      let formattedText = '';
+      switch (format) {
+        case 'bold':
+          formattedText = `<strong>${selectedText || 'Bold text'}</strong>`;
+          break;
+        case 'italic':
+          formattedText = `<em>${selectedText || 'Italic text'}</em>`;
+          break;
+        case 'underline':
+          formattedText = `<u>${selectedText || 'Underlined text'}</u>`;
+          break;
+        case 'heading':
+          formattedText = `<h2>${selectedText || 'Heading'}</h2>`;
+          break;
+        case 'link':
+          const url = prompt('Enter URL:');
+          if (url) {
+            formattedText = `<a href="${url}">${selectedText || 'Link text'}</a>`;
+          } else {
+            return;
+          }
+          break;
+        case 'list':
+          formattedText = `<ul>\n  <li>${selectedText || 'List item'}</li>\n</ul>`;
+          break;
+        default:
+          return;
+      }
+      
+      const newContent = currentContent.substring(0, start) + formattedText + currentContent.substring(end);
+      setCreateTemplateModal(prev => ({ ...prev, content: newContent }));
+      
+      // Restore focus and cursor position
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + formattedText.length, start + formattedText.length);
+      }, 0);
+    }
+  };
+
   const renderTemplatesTab = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900">Email Templates</h2>
         <button
-          onClick={() => setShowTemplateModal(true)}
+          onClick={handleOpenCreateTemplateModal}
           className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -322,7 +613,7 @@ Best,
                 </span>
               </div>
               <button
-                onClick={() => setSelectedTemplate(template)}
+                onClick={() => handleUseTemplate(template)}
                 className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200"
               >
                 Use Template
@@ -507,7 +798,10 @@ Best,
                     {new Date(comm.sentAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button className="text-blue-400 hover:text-blue-300 font-medium hover:bg-blue-900 px-3 py-1 rounded-lg transition-colors">
+                    <button 
+                      onClick={() => handleViewCommunicationDetails(comm)}
+                      className="text-blue-400 hover:text-blue-300 font-medium hover:bg-blue-900 px-3 py-1 rounded-lg transition-colors"
+                    >
                       View Details
                     </button>
                   </td>
@@ -524,7 +818,10 @@ Best,
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-white">Automation Rules</h2>
-        <button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2">
+        <button 
+          onClick={handleCreateAutomationRule}
+          className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-6 py-3 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center space-x-2"
+        >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
@@ -588,6 +885,560 @@ Best,
     </div>
   );
 
+  // Modal Components
+  const renderCreateTemplateModal = () => {
+    if (!createTemplateModal.isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 rounded-xl max-w-6xl w-full max-h-[95vh] overflow-y-auto border border-gray-600">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-semibold text-white">Create New Template</h3>
+              <button
+                onClick={() => setCreateTemplateModal({ isOpen: false, templateName: '', templateType: 'custom', subject: '', content: '', variables: [], newVariable: '' })}
+                className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Template Settings */}
+              <div className="lg:col-span-1 space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">Template Name</label>
+                  <input
+                    type="text"
+                    value={createTemplateModal.templateName}
+                    onChange={(e) => setCreateTemplateModal(prev => ({ ...prev, templateName: e.target.value }))}
+                    placeholder="Enter template name"
+                    className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">Template Type</label>
+                  <select
+                    value={createTemplateModal.templateType}
+                    onChange={(e) => setCreateTemplateModal(prev => ({ ...prev, templateType: e.target.value as any }))}
+                    className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
+                  >
+                    <option value="welcome">Welcome</option>
+                    <option value="follow-up">Follow-up</option>
+                    <option value="renewal">Renewal</option>
+                    <option value="churn-prevention">Churn Prevention</option>
+                    <option value="check-in">Check-in</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+
+                {/* Variables Section */}
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">Template Variables</label>
+                  <div className="space-y-3">
+                    <div className="flex space-x-2">
+                      <input
+                        type="text"
+                        value={createTemplateModal.newVariable}
+                        onChange={(e) => setCreateTemplateModal(prev => ({ ...prev, newVariable: e.target.value }))}
+                        placeholder="Variable name (e.g., clientName)"
+                        className="flex-1 px-3 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400 text-sm"
+                      />
+                      <button
+                        onClick={handleAddVariable}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                      {createTemplateModal.variables.map((variable, index) => (
+                        <div key={index} className="flex items-center bg-blue-800 text-blue-100 px-3 py-1 rounded-full text-sm">
+                          <span>{variable}</span>
+                          <button
+                            onClick={() => handleRemoveVariable(variable)}
+                            className="ml-2 text-blue-200 hover:text-white"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    {createTemplateModal.variables.length > 0 && (
+                      <div>
+                        <p className="text-sm text-gray-300 mb-2">Click to insert variable:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {createTemplateModal.variables.map((variable, index) => (
+                            <button
+                              key={index}
+                              onClick={() => handleInsertVariable(variable)}
+                              className="bg-gray-700 hover:bg-gray-600 text-gray-200 px-2 py-1 rounded text-xs border border-gray-600"
+                            >
+                              {`{{${variable}}}`}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Template Content */}
+              <div className="lg:col-span-2 space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">Subject Line</label>
+                  <input
+                    type="text"
+                    value={createTemplateModal.subject}
+                    onChange={(e) => setCreateTemplateModal(prev => ({ ...prev, subject: e.target.value }))}
+                    placeholder="Enter email subject"
+                    className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Rich Text Editor Toolbar */}
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">Email Content</label>
+                  <div className="border border-gray-600 rounded-lg bg-gray-700">
+                    {/* Toolbar */}
+                    <div className="flex flex-wrap items-center gap-1 p-3 border-b border-gray-600 bg-gray-750">
+                      <button
+                        onClick={() => applyTextFormatting('bold')}
+                        className="p-2 hover:bg-gray-600 rounded text-white transition-colors"
+                        title="Bold"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"/>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => applyTextFormatting('italic')}
+                        className="p-2 hover:bg-gray-600 rounded text-white transition-colors"
+                        title="Italic"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4h-8z"/>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => applyTextFormatting('underline')}
+                        className="p-2 hover:bg-gray-600 rounded text-white transition-colors"
+                        title="Underline"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"/>
+                        </svg>
+                      </button>
+                      <div className="w-px h-6 bg-gray-600 mx-1"></div>
+                      <button
+                        onClick={() => applyTextFormatting('heading')}
+                        className="p-2 hover:bg-gray-600 rounded text-white transition-colors"
+                        title="Heading"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M5 4v3h5.5v12h3V7H19V4z"/>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => applyTextFormatting('link')}
+                        className="p-2 hover:bg-gray-600 rounded text-white transition-colors"
+                        title="Link"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => applyTextFormatting('list')}
+                        className="p-2 hover:bg-gray-600 rounded text-white transition-colors"
+                        title="Bullet List"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/>
+                        </svg>
+                      </button>
+                      <div className="w-px h-6 bg-gray-600 mx-1"></div>
+                      <label className="p-2 hover:bg-gray-600 rounded text-white transition-colors cursor-pointer" title="Insert Image">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    
+                    {/* Content Area */}
+                    <textarea
+                      id="template-content"
+                      value={createTemplateModal.content}
+                      onChange={(e) => setCreateTemplateModal(prev => ({ ...prev, content: e.target.value }))}
+                      placeholder="Enter your email content here. You can use HTML tags for formatting."
+                      rows={16}
+                      className="w-full px-4 py-3 bg-gray-700 text-white placeholder-gray-400 border-0 focus:ring-0 resize-none font-mono text-sm"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Tip: You can use HTML tags for rich formatting, or use the toolbar buttons above. Insert variables using the buttons in the sidebar.
+                  </p>
+                </div>
+
+                {/* Preview Section */}
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">Preview</label>
+                  <div className="border border-gray-600 rounded-lg bg-white p-4 max-h-64 overflow-y-auto">
+                    <div className="text-gray-900">
+                      <h3 className="font-semibold mb-2">{createTemplateModal.subject || 'Subject Preview'}</h3>
+                      <div 
+                        className="prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ 
+                          __html: createTemplateModal.content.replace(/\n/g, '<br>') || '<em>Content preview will appear here...</em>' 
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-600">
+              <button
+                onClick={() => setCreateTemplateModal({ isOpen: false, templateName: '', templateType: 'custom', subject: '', content: '', variables: [], newVariable: '' })}
+                className="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveTemplate}
+                disabled={!createTemplateModal.templateName || !createTemplateModal.subject || !createTemplateModal.content}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Create Template
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderTemplateUsageModal = () => {
+    if (!templateUsageModal.isOpen || !templateUsageModal.template) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-600">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-white">Use Template: {templateUsageModal.template.name}</h3>
+              <button
+                onClick={() => setTemplateUsageModal({ isOpen: false, template: null, recipients: '', customSubject: '', customContent: '' })}
+                className="text-gray-400 hover:text-white p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Recipients (comma-separated emails)</label>
+                <input
+                  type="text"
+                  value={templateUsageModal.recipients}
+                  onChange={(e) => setTemplateUsageModal(prev => ({ ...prev, recipients: e.target.value }))}
+                  placeholder="client@example.com, another@example.com"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Subject</label>
+                <input
+                  type="text"
+                  value={templateUsageModal.customSubject}
+                  onChange={(e) => setTemplateUsageModal(prev => ({ ...prev, customSubject: e.target.value }))}
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Content</label>
+                <textarea
+                  value={templateUsageModal.customContent}
+                  onChange={(e) => setTemplateUsageModal(prev => ({ ...prev, customContent: e.target.value }))}
+                  rows={12}
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  onClick={() => setTemplateUsageModal({ isOpen: false, template: null, recipients: '', customSubject: '', customContent: '' })}
+                  className="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSendTemplateEmail}
+                  disabled={loading || !templateUsageModal.recipients}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+                >
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <span>Send Email</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderCommunicationDetailsModal = () => {
+    if (!communicationDetailsModal.isOpen || !communicationDetailsModal.communication) return null;
+
+    const comm = communicationDetailsModal.communication;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-600">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-white">Communication Details</h3>
+              <button
+                onClick={() => setCommunicationDetailsModal({ isOpen: false, communication: null })}
+                className="text-gray-400 hover:text-white p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Client</label>
+                  <p className="text-white">{comm.clientName}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Type</label>
+                  <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                    comm.type === 'email' ? 'bg-blue-800 text-blue-100' :
+                    comm.type === 'sms' ? 'bg-green-800 text-green-100' :
+                    'bg-purple-800 text-purple-100'
+                  }`}>
+                    {comm.type.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Subject</label>
+                <p className="text-white">{comm.subject}</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Content</label>
+                <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+                  <p className="text-white whitespace-pre-wrap">{comm.content}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                  <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                    comm.status === 'sent' ? 'bg-yellow-800 text-yellow-100' :
+                    comm.status === 'delivered' ? 'bg-blue-800 text-blue-100' :
+                    comm.status === 'opened' ? 'bg-green-800 text-green-100' :
+                    comm.status === 'replied' ? 'bg-purple-800 text-purple-100' :
+                    'bg-red-800 text-red-100'
+                  }`}>
+                    {comm.status.charAt(0).toUpperCase() + comm.status.slice(1)}
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Sent At</label>
+                  <p className="text-white">{new Date(comm.sentAt).toLocaleString()}</p>
+                </div>
+              </div>
+
+              {comm.openedAt && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Opened At</label>
+                  <p className="text-white">{new Date(comm.openedAt).toLocaleString()}</p>
+                </div>
+              )}
+
+              {comm.repliedAt && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Replied At</label>
+                  <p className="text-white">{new Date(comm.repliedAt).toLocaleString()}</p>
+                </div>
+              )}
+
+              <div className="flex justify-end pt-4">
+                <button
+                  onClick={() => setCommunicationDetailsModal({ isOpen: false, communication: null })}
+                  className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderCreateRuleModal = () => {
+    if (!createRuleModal.isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-600">
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-white">Create Automation Rule</h3>
+              <button
+                onClick={() => setCreateRuleModal({ isOpen: false, ruleName: '', triggerType: 'health_score', triggerCondition: 'below', triggerValue: '', actionType: 'email', actionTemplate: '', actionDelay: 0 })}
+                className="text-gray-400 hover:text-white p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">Rule Name</label>
+                <input
+                  type="text"
+                  value={createRuleModal.ruleName}
+                  onChange={(e) => setCreateRuleModal(prev => ({ ...prev, ruleName: e.target.value }))}
+                  placeholder="Enter rule name"
+                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Trigger Type</label>
+                  <select
+                    value={createRuleModal.triggerType}
+                    onChange={(e) => setCreateRuleModal(prev => ({ ...prev, triggerType: e.target.value }))}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="health_score">Health Score</option>
+                    <option value="usage_drop">Usage Drop</option>
+                    <option value="inactivity">Inactivity</option>
+                    <option value="contract_renewal">Contract Renewal</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Condition</label>
+                  <select
+                    value={createRuleModal.triggerCondition}
+                    onChange={(e) => setCreateRuleModal(prev => ({ ...prev, triggerCondition: e.target.value }))}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="below">Below</option>
+                    <option value="above">Above</option>
+                    <option value="equals">Equals</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Value</label>
+                  <input
+                    type="text"
+                    value={createRuleModal.triggerValue}
+                    onChange={(e) => setCreateRuleModal(prev => ({ ...prev, triggerValue: e.target.value }))}
+                    placeholder="e.g., 60, 7 days"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Action Type</label>
+                  <select
+                    value={createRuleModal.actionType}
+                    onChange={(e) => setCreateRuleModal(prev => ({ ...prev, actionType: e.target.value }))}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="email">Send Email</option>
+                    <option value="sms">Send SMS</option>
+                    <option value="task">Create Task</option>
+                    <option value="alert">Send Alert</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Template (optional)</label>
+                  <select
+                    value={createRuleModal.actionTemplate}
+                    onChange={(e) => setCreateRuleModal(prev => ({ ...prev, actionTemplate: e.target.value }))}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select template</option>
+                    {templates.map(template => (
+                      <option key={template.id} value={template.name}>{template.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  onClick={() => setCreateRuleModal({ isOpen: false, ruleName: '', triggerType: 'health_score', triggerCondition: 'below', triggerValue: '', actionType: 'email', actionTemplate: '', actionDelay: 0 })}
+                  className="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveAutomationRule}
+                  disabled={!createRuleModal.ruleName || !createRuleModal.triggerValue}
+                  className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Create Rule
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-6 space-y-6 bg-gray-900 min-h-screen">
       {/* Modern Tab Navigation */}
@@ -622,6 +1473,12 @@ Best,
         {activeTab === 'history' && renderHistoryTab()}
         {activeTab === 'automation' && renderAutomationTab()}
       </div>
+
+      {/* Modal Components */}
+      {renderTemplateUsageModal()}
+      {renderCommunicationDetailsModal()}
+      {renderCreateRuleModal()}
+      {renderCreateTemplateModal()}
     </div>
   );
 }

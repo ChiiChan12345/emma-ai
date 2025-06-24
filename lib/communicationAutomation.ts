@@ -1,4 +1,5 @@
 import { openai } from './openai';
+import { Client } from './types';
 
 export interface EmailTemplate {
   id: string;
@@ -43,117 +44,90 @@ export class CommunicationAutomation {
     {
       id: 'welcome_onboarding',
       name: 'Welcome & Onboarding',
-      subject: 'Welcome to {{company_name}}, {{client_name}}! 🎉',
-      body: `Hi {{client_name}},
+      subject: 'Welcome to {{company_name}}, {{client_name}}!',
+      body: `
+        Hi {{client_name}},
 
-Welcome to {{company_name}}! We're thrilled to have {{client_company}} as part of our community.
+        Welcome to {{company_name}}! I'm Emma, your dedicated Customer Success Manager, and I'm thrilled to have you on board.
 
-To help you get started quickly, I've prepared a personalized onboarding plan:
+        I wanted to reach out personally to ensure you have everything you need to get started and maximize your success with our platform.
 
-🚀 **Your Next Steps:**
-1. Complete your profile setup
-2. Import your first dataset
-3. Schedule a 1:1 success call with me
+        Here's what I've prepared for you:
+        
+        🎯 Your personalized onboarding plan
+        📊 Access to your dedicated dashboard
+        🎓 Training resources tailored to your {{plan}} plan
+        📞 Direct line to our support team
 
-**Quick Start Resources:**
-- [Getting Started Guide]({{onboarding_guide}})
-- [Video Tutorials]({{tutorial_link}})
-- [Community Forum]({{community_link}})
+        I'll be checking in with you regularly to ensure you're getting the most value from our platform. If you have any questions or need assistance, please don't hesitate to reach out.
 
-I'll be checking in with you over the next few days to ensure everything goes smoothly. Feel free to reply to this email with any questions!
+        Looking forward to your success!
 
-Best regards,
-Emma - Your Customer Success Manager
-{{company_name}}`,
-      variables: ['client_name', 'client_company', 'company_name', 'onboarding_guide', 'tutorial_link', 'community_link'],
+        Best regards,
+        Emma Thompson
+        Customer Success Manager
+        {{company_name}}
+      `,
+      variables: ['client_name', 'company_name', 'plan'],
       category: 'onboarding'
     },
     {
       id: 'health_check_declining',
-      name: 'Health Check - Declining',
-      subject: 'Let\'s get {{client_company}} back on track 📈',
-      body: `Hi {{client_name}},
+      name: 'Health Check - Declining Score',
+      subject: 'Let\'s get your {{company_name}} account back on track, {{client_name}}',
+      body: `
+        Hi {{client_name}},
 
-I noticed that {{client_company}}'s engagement has decreased recently, and I wanted to reach out to see how I can help.
+        I hope you're doing well! I've been monitoring your {{company_name}} account and noticed that your engagement has decreased recently.
 
-**What I've observed:**
-- Usage has dropped by {{usage_decline}}% this month
-- Last login: {{last_activity}}
-- Current health score: {{health_score}}/100
+        I want to make sure you're getting the maximum value from our platform. Here's what I've observed:
 
-**How I can help:**
-- Schedule a quick 15-minute call to identify any blockers
-- Provide additional training resources
-- Connect you with our technical team if needed
+        📊 Usage has dropped by {{usage_change}}% this month
+        🎯 You're currently using {{current_usage}} of your {{usage_limit}} monthly limit
+        ⚠️ Health score: {{health_score}}/100
 
-Would you prefer a call this week or next? I have availability on {{available_times}}.
+        I'd love to schedule a quick 15-minute call to:
+        ✅ Understand any challenges you might be facing
+        ✅ Share some best practices that could help
+        ✅ Discuss features that might be perfect for your workflow
 
-Looking forward to helping {{client_company}} succeed!
+        When would be a good time for you this week?
 
-Best,
-Emma
-{{company_name}}`,
-      variables: ['client_name', 'client_company', 'usage_decline', 'last_activity', 'health_score', 'available_times', 'company_name'],
+        Best regards,
+        Emma Thompson
+        Customer Success Manager
+      `,
+      variables: ['client_name', 'company_name', 'usage_change', 'current_usage', 'usage_limit', 'health_score'],
       category: 'health-check'
     },
     {
       id: 'upsell_opportunity',
-      name: 'Upsell Opportunity',
-      subject: 'Unlock more value for {{client_company}} 🚀',
-      body: `Hi {{client_name}},
+      name: 'Upgrade Opportunity',
+      subject: 'Ready to unlock more potential, {{client_name}}?',
+      body: `
+        Hi {{client_name}},
 
-Great news! I've been analyzing {{client_company}}'s usage patterns, and you're getting amazing results with our platform.
+        Fantastic news! I've been analyzing your {{company_name}} usage patterns, and I can see you're really making the most of our platform.
 
-**Your Success Metrics:**
-- {{usage_percentage}}% of your plan limit used
-- {{feature_adoption}} features actively used
-- {{success_metric}} improvement in your KPIs
+        You're currently using {{usage_percentage}}% of your {{current_plan}} plan limits, which tells me you're getting great value from our service.
 
-Based on your growth, I think you'd benefit from our {{recommended_plan}} plan, which includes:
-- {{feature_1}}
-- {{feature_2}}
-- {{feature_3}}
-- Priority support
+        I wanted to share an exciting opportunity: our {{recommended_plan}} plan could unlock even more potential for your team:
 
-Would you like to schedule a 20-minute call to discuss how these features could accelerate {{client_company}}'s growth?
+        🚀 {{feature_1}}
+        📈 {{feature_2}}
+        🎯 {{feature_3}}
+        💰 Potential ROI increase of {{roi_increase}}%
 
-Best regards,
-Emma
-{{company_name}}`,
-      variables: ['client_name', 'client_company', 'usage_percentage', 'feature_adoption', 'success_metric', 'recommended_plan', 'feature_1', 'feature_2', 'feature_3', 'company_name'],
+        Based on your current usage, I estimate this upgrade could save you {{time_savings}} hours per month and increase your team's productivity significantly.
+
+        Would you be interested in a brief demo to see these features in action?
+
+        Best regards,
+        Emma Thompson
+        Customer Success Manager
+      `,
+      variables: ['client_name', 'company_name', 'usage_percentage', 'current_plan', 'recommended_plan', 'feature_1', 'feature_2', 'feature_3', 'roi_increase', 'time_savings'],
       category: 'upsell'
-    },
-    {
-      id: 'renewal_reminder',
-      name: 'Contract Renewal Reminder',
-      subject: 'Your {{client_company}} renewal is coming up',
-      body: `Hi {{client_name}},
-
-I hope you're having a great {{current_month}}! I wanted to reach out because {{client_company}}'s contract is up for renewal on {{renewal_date}}.
-
-**Your Success Story:**
-Over the past year, {{client_company}} has achieved:
-- {{success_metric_1}}
-- {{success_metric_2}}
-- {{success_metric_3}}
-
-**What's New for Next Year:**
-- {{new_feature_1}}
-- {{new_feature_2}}
-- Enhanced support options
-
-I'd love to schedule a renewal discussion to:
-1. Review your success and ROI
-2. Discuss your goals for next year
-3. Explore any additional features that could help
-
-Are you available for a 30-minute call next week?
-
-Best,
-Emma
-{{company_name}}`,
-      variables: ['client_name', 'client_company', 'current_month', 'renewal_date', 'success_metric_1', 'success_metric_2', 'success_metric_3', 'new_feature_1', 'new_feature_2', 'company_name'],
-      category: 'retention'
     }
   ];
 
@@ -167,7 +141,7 @@ Emma
 
   static async generatePersonalizedEmail(
     templateId: string,
-    clientData: any,
+    clientData: Client,
     customContext?: string
   ): Promise<{ subject: string; body: string; variables: Record<string, string> }> {
     const template = this.getTemplate(templateId);
@@ -223,7 +197,7 @@ Emma
     }
   }
 
-  static async generateSMSMessage(clientData: any, context: string): Promise<string> {
+  static async generateSMSMessage(clientData: Client, context: string): Promise<string> {
     try {
       const prompt = `
         Generate a professional but friendly SMS message for customer success.
@@ -256,7 +230,7 @@ Emma
     };
   }
 
-  static evaluateAutomationRules(clientData: any, rules: AutomationRule[]): AutomationRule[] {
+  static evaluateAutomationRules(clientData: Client, rules: AutomationRule[]): AutomationRule[] {
     return rules.filter(rule => {
       if (!rule.active) return false;
 
@@ -275,42 +249,42 @@ Emma
     });
   }
 
-  private static evaluateHealthScoreTrigger(clientData: any, trigger: any): boolean {
+  private static evaluateHealthScoreTrigger(clientData: Client, trigger: AutomationRule['trigger']): boolean {
     const healthScore = clientData.healthScore || 0;
     switch (trigger.condition) {
       case 'below':
-        return healthScore < trigger.value;
+        return healthScore < Number(trigger.value);
       case 'above':
-        return healthScore > trigger.value;
+        return healthScore > Number(trigger.value);
       case 'equals':
-        return healthScore === trigger.value;
+        return healthScore === Number(trigger.value);
       default:
         return false;
     }
   }
 
-  private static evaluateUsageDropTrigger(clientData: any, trigger: any): boolean {
+  private static evaluateUsageDropTrigger(clientData: Client, trigger: AutomationRule['trigger']): boolean {
     const currentUsage = clientData.usage.currentMonth || 0;
     const lastUsage = clientData.usage.lastMonth || 0;
     const dropPercentage = lastUsage > 0 ? ((lastUsage - currentUsage) / lastUsage) * 100 : 0;
     
-    return dropPercentage >= trigger.value;
+    return dropPercentage >= Number(trigger.value);
   }
 
-  private static evaluateInactivityTrigger(clientData: any, trigger: any): boolean {
+  private static evaluateInactivityTrigger(clientData: Client, trigger: AutomationRule['trigger']): boolean {
     const lastActivity = new Date(clientData.lastActivity);
     const daysSinceActivity = Math.floor((new Date().getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
     
-    return daysSinceActivity >= trigger.value;
+    return daysSinceActivity >= Number(trigger.value);
   }
 
-  private static evaluateRenewalTrigger(clientData: any, trigger: any): boolean {
+  private static evaluateRenewalTrigger(clientData: Client, trigger: AutomationRule['trigger']): boolean {
     if (!clientData.nextRenewal) return false;
     
     const renewalDate = new Date(clientData.nextRenewal);
     const daysUntilRenewal = Math.floor((renewalDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
     
-    return daysUntilRenewal <= trigger.value;
+    return daysUntilRenewal <= Number(trigger.value);
   }
 
   static createCommunicationSequence(sequence: Omit<CommunicationSequence, 'id'>): CommunicationSequence {
@@ -364,7 +338,7 @@ Emma
         },
         action: {
           type: 'email',
-          templateId: 'renewal_reminder',
+          templateId: 'upsell_opportunity',
           delay: 0,
           priority: 'high',
         },
@@ -374,38 +348,26 @@ Emma
   }
 
   static async scheduleAutomatedCommunication(
-    clientData: any,
+    clientData: Client,
     rule: AutomationRule
   ): Promise<{ scheduled: boolean; message: string }> {
     try {
-      // In a real implementation, this would integrate with email service (SendGrid, etc.)
-      // and SMS service (Twilio, etc.)
-      
-      console.log(`Scheduling ${rule.action.type} for ${clientData.name} in ${rule.action.delay} hours`);
-      
-      if (rule.action.type === 'email' && rule.action.templateId) {
-        const emailContent = await this.generatePersonalizedEmail(
-          rule.action.templateId,
-          clientData
-        );
-        
-        // Mock email scheduling
-        console.log('Email scheduled:', {
-          to: clientData.email,
-          subject: emailContent.subject,
-          priority: rule.action.priority,
-        });
-      }
+      // In a real implementation, this would integrate with a job queue or scheduler
+      const delay = rule.action.delay || 0;
+      const scheduledTime = new Date(Date.now() + delay * 60 * 60 * 1000);
+
+      // Mock scheduling
+      console.log(`Scheduled ${rule.action.type} for ${clientData.name} at ${scheduledTime.toISOString()}`);
 
       return {
         scheduled: true,
-        message: `${rule.action.type} scheduled for ${clientData.name}`,
+        message: `${rule.action.type} scheduled for ${scheduledTime.toLocaleString()}`,
       };
     } catch (error) {
       console.error('Error scheduling communication:', error);
       return {
         scheduled: false,
-        message: `Failed to schedule ${rule.action.type}`,
+        message: `Failed to schedule communication: ${error}`,
       };
     }
   }

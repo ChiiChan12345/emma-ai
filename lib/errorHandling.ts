@@ -23,7 +23,7 @@ export interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   error?: Error;
   userId?: string;
   requestId?: string;
@@ -34,7 +34,7 @@ export interface ErrorMetadata {
   type: ErrorType;
   code: string;
   message: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   timestamp: string;
   requestId?: string;
   userId?: string;
@@ -47,7 +47,7 @@ export class AppError extends Error {
   public readonly type: ErrorType;
   public readonly code: string;
   public readonly statusCode: number;
-  public readonly details?: Record<string, any>;
+  public readonly details?: Record<string, unknown>;
   public readonly recoverable: boolean;
   public readonly timestamp: string;
 
@@ -56,7 +56,7 @@ export class AppError extends Error {
     code: string,
     message: string,
     statusCode: number = 500,
-    details?: Record<string, any>,
+    details?: Record<string, unknown>,
     recoverable: boolean = true
   ) {
     super(message);
@@ -120,7 +120,7 @@ export class Logger {
     console.log(`[${LogLevel[entry.level]}] ${entry.message}`, entry.context);
   }
 
-  debug(message: string, context?: Record<string, any>, component?: string): void {
+  debug(message: string, context?: Record<string, unknown>, component?: string): void {
     if (!this.shouldLog(LogLevel.DEBUG)) return;
     
     this.addLog({
@@ -132,7 +132,7 @@ export class Logger {
     });
   }
 
-  info(message: string, context?: Record<string, any>, component?: string): void {
+  info(message: string, context?: Record<string, unknown>, component?: string): void {
     if (!this.shouldLog(LogLevel.INFO)) return;
     
     this.addLog({
@@ -144,7 +144,7 @@ export class Logger {
     });
   }
 
-  warn(message: string, context?: Record<string, any>, component?: string): void {
+  warn(message: string, context?: Record<string, unknown>, component?: string): void {
     if (!this.shouldLog(LogLevel.WARN)) return;
     
     this.addLog({
@@ -156,7 +156,7 @@ export class Logger {
     });
   }
 
-  error(message: string, error?: Error, context?: Record<string, any>, component?: string): void {
+  error(message: string, error?: Error, context?: Record<string, unknown>, component?: string): void {
     if (!this.shouldLog(LogLevel.ERROR)) return;
     
     this.addLog({
@@ -169,7 +169,7 @@ export class Logger {
     });
   }
 
-  fatal(message: string, error?: Error, context?: Record<string, any>, component?: string): void {
+  fatal(message: string, error?: Error, context?: Record<string, unknown>, component?: string): void {
     this.addLog({
       timestamp: new Date().toISOString(),
       level: LogLevel.FATAL,
@@ -202,7 +202,7 @@ export class Logger {
 export class ErrorHandler {
   private static logger = Logger.getInstance();
 
-  static createValidationError(message: string, details?: Record<string, any>): AppError {
+  static createValidationError(message: string, details?: Record<string, unknown>): AppError {
     return new AppError(
       ErrorType.VALIDATION,
       'VALIDATION_FAILED',
@@ -247,7 +247,7 @@ export class ErrorHandler {
     );
   }
 
-  static createConflictError(message: string, details?: Record<string, any>): AppError {
+  static createConflictError(message: string, details?: Record<string, unknown>): AppError {
     return new AppError(
       ErrorType.CONFLICT,
       'RESOURCE_CONFLICT',
@@ -292,48 +292,49 @@ export class ErrorHandler {
   }
 
   static handleError(error: unknown, component?: string): AppError {
+    // If it's already an AppError, just log and return it
     if (error instanceof AppError) {
       this.logger.error(
-        `AppError in ${component}: ${error.message}`,
+        `AppError in ${component || 'unknown'}: ${error.message}`,
         error,
-        { type: error.type, code: error.code },
-        component
+        { code: error.code, type: error.type, component }
       );
       return error;
     }
 
+    // If it's a standard Error, wrap it
     if (error instanceof Error) {
       this.logger.error(
-        `Unexpected error in ${component}: ${error.message}`,
+        `Unhandled error in ${component || 'unknown'}: ${error.message}`,
         error,
-        undefined,
-        component
+        { stack: error.stack, component }
       );
       
       return new AppError(
         ErrorType.UNKNOWN,
-        'UNEXPECTED_ERROR',
-        'An unexpected error occurred',
+        'UNHANDLED_ERROR',
+        error.message,
         500,
-        { originalMessage: error.message },
-        false
+        { originalStack: error.stack },
+        true
       );
     }
 
+    // If it's not even an Error object, create a generic error
+    const message = typeof error === 'string' ? error : 'Unknown error occurred';
     this.logger.error(
-      `Unknown error type in ${component}`,
+      `Unknown error type in ${component || 'unknown'}: ${message}`,
       undefined,
-      { error },
-      component
+      { originalError: error, component }
     );
 
     return new AppError(
       ErrorType.UNKNOWN,
       'UNKNOWN_ERROR',
-      'An unknown error occurred',
+      message,
       500,
-      { error },
-      false
+      { originalError: error },
+      true
     );
   }
 
@@ -343,56 +344,41 @@ export class ErrorHandler {
     delayMs: number = 1000,
     component?: string
   ): Promise<T> {
-    let lastError: Error = new Error('No attempts made');
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    let lastError: Error;
+    
+    for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
       try {
         this.logger.debug(
-          `Attempting operation (${attempt}/${maxRetries})`,
-          undefined,
+          `Attempting operation (attempt ${attempt}/${maxRetries + 1})`,
+          { attempt, maxRetries },
           component
         );
         
-        const result = await operation();
-        
-        if (attempt > 1) {
-          this.logger.info(
-            `Operation succeeded on attempt ${attempt}`,
-            undefined,
-            component
-          );
-        }
-        
-        return result;
+        return await operation();
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
         
-        this.logger.warn(
-          `Operation failed on attempt ${attempt}: ${lastError.message}`,
-          undefined,
-          component
-        );
-
-        if (attempt < maxRetries) {
-          const delay = delayMs * Math.pow(2, attempt - 1); // Exponential backoff
-          this.logger.debug(
-            `Retrying in ${delay}ms`,
-            { delay, attempt, maxRetries },
-            component
-          );
-          await new Promise(resolve => setTimeout(resolve, delay));
+        if (attempt <= maxRetries) {
+                     this.logger.warn(
+             `Operation failed, retrying in ${delayMs}ms (attempt ${attempt}/${maxRetries + 1})`,
+             { attempt, delayMs, component }
+           );
+          
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+          delayMs *= 2; // Exponential backoff
         }
       }
     }
 
+    // All retries exhausted
     this.logger.error(
-      `Operation failed after ${maxRetries} attempts`,
-      lastError,
+      `Operation failed after ${maxRetries + 1} attempts`,
+      lastError!,
       { maxRetries },
       component
     );
-
-    throw this.handleError(lastError, component);
+    
+    throw this.handleError(lastError!, component);
   }
 
   static async withTimeout<T>(
@@ -414,14 +400,21 @@ export class ErrorHandler {
     });
 
     try {
-      return await Promise.race([operation(), timeoutPromise]);
-    } catch (error) {
-      this.logger.error(
-        `Operation timed out or failed`,
-        error instanceof Error ? error : undefined,
+      this.logger.debug(
+        `Starting operation with ${timeoutMs}ms timeout`,
         { timeoutMs },
         component
       );
+      
+      return await Promise.race([operation(), timeoutPromise]);
+    } catch (error) {
+      this.logger.error(
+        `Operation failed or timed out`,
+        error instanceof Error ? error : new Error(String(error)),
+        { timeoutMs },
+        component
+      );
+      
       throw this.handleError(error, component);
     }
   }
@@ -431,27 +424,32 @@ export class ErrorHandler {
     resetTimeoutMs: number = 60000
   ) {
     let failures = 0;
-    let lastFailTime = 0;
+    let lastFailureTime = 0;
     let state: 'CLOSED' | 'OPEN' | 'HALF_OPEN' = 'CLOSED';
 
     return async <T>(operation: () => Promise<T>, component?: string): Promise<T> => {
       const now = Date.now();
 
-      // Check if we should reset the circuit breaker
-      if (state === 'OPEN' && now - lastFailTime >= resetTimeoutMs) {
+      // Reset circuit breaker if enough time has passed
+      if (state === 'OPEN' && now - lastFailureTime >= resetTimeoutMs) {
         state = 'HALF_OPEN';
-        this.logger.info('Circuit breaker transitioning to HALF_OPEN', undefined, component);
+        failures = 0;
+        this.logger.info(
+          'Circuit breaker moving to HALF_OPEN state',
+          { state, failures },
+          component
+        );
       }
 
-      // If circuit is open, fail fast
+      // Reject immediately if circuit is open
       if (state === 'OPEN') {
         throw new AppError(
           ErrorType.EXTERNAL_SERVICE,
           'CIRCUIT_BREAKER_OPEN',
-          'Circuit breaker is open - service unavailable',
+          'Circuit breaker is open - operation rejected',
           503,
-          { failures, lastFailTime },
-          true
+          { state, failures, lastFailureTime },
+          false
         );
       }
 
@@ -462,20 +460,24 @@ export class ErrorHandler {
         if (state === 'HALF_OPEN') {
           state = 'CLOSED';
           failures = 0;
-          this.logger.info('Circuit breaker reset to CLOSED', undefined, component);
+          this.logger.info(
+            'Circuit breaker reset to CLOSED state',
+            { state, failures },
+            component
+          );
         }
         
         return result;
       } catch (error) {
         failures++;
-        lastFailTime = now;
+        lastFailureTime = now;
 
         if (failures >= maxFailures) {
           state = 'OPEN';
-          this.logger.error(
-            `Circuit breaker opened after ${failures} failures`,
-            error instanceof Error ? error : undefined,
-            { maxFailures, resetTimeoutMs },
+          this.logger.warn(
+            'Circuit breaker opened due to repeated failures',
+            error instanceof Error ? error : new Error(String(error)),
+            { state, failures, maxFailures },
             component
           );
         }

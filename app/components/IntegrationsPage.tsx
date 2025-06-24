@@ -124,9 +124,9 @@ export function IntegrationsPage() {
         ))}
       </div>
 
-      <div className="mt-12 bg-blue-50 rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Need a Custom Integration?</h2>
-        <p className="text-gray-600 mb-4">
+      <div className="mt-12 bg-blue-900/20 rounded-lg p-6 border border-blue-500/30">
+        <h2 className="text-lg font-semibold text-white mb-2">Need a Custom Integration?</h2>
+        <p className="text-gray-300 mb-4">
           We're always looking to add new integrations. Let us know what tools you use and we'll prioritize them.
         </p>
         <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">

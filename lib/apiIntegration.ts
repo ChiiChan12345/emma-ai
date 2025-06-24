@@ -18,7 +18,7 @@ export interface APIParameter {
   type: 'string' | 'number' | 'boolean' | 'object' | 'array';
   required: boolean;
   description: string;
-  example?: any;
+  example?: unknown;
   validation?: {
     min?: number;
     max?: number;
@@ -29,8 +29,8 @@ export interface APIParameter {
 export interface APIResponse {
   statusCode: number;
   description: string;
-  schema: Record<string, any>;
-  example?: any;
+  schema: Record<string, unknown>;
+  example?: unknown;
 }
 
 export interface Webhook {
@@ -54,7 +54,7 @@ export interface ThirdPartyIntegration {
   type: 'crm' | 'email' | 'analytics' | 'payment' | 'communication';
   provider: string;
   status: 'connected' | 'disconnected' | 'error';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   endpoints: string[];
   lastSync?: Date;
   syncFrequency: 'realtime' | 'hourly' | 'daily' | 'weekly';
@@ -324,8 +324,10 @@ export class APIManager {
         provider: 'Salesforce',
         status: 'disconnected',
         config: {
-          apiVersion: 'v54.0',
-          sandbox: false
+          clientId: '',
+          clientSecret: '',
+          redirectUri: '',
+          sandbox: false,
         },
         endpoints: [
           '/services/data/v54.0/sobjects/Account',
@@ -341,15 +343,15 @@ export class APIManager {
         provider: 'HubSpot',
         status: 'disconnected',
         config: {
-          portalId: null,
-          hapiKey: null
+          apiKey: '',
+          portalId: '',
         },
         endpoints: [
-          '/contacts/v1/lists/all/contacts/all',
-          '/deals/v1/deal/paged',
-          '/companies/v2/companies/paged'
+          '/crm/v3/objects/companies',
+          '/crm/v3/objects/contacts',
+          '/crm/v3/objects/deals'
         ],
-        syncFrequency: 'hourly'
+        syncFrequency: 'daily'
       },
       {
         id: 'sendgrid-email',
@@ -370,21 +372,20 @@ export class APIManager {
         syncFrequency: 'realtime'
       },
       {
-        id: 'stripe-payment',
+        id: 'stripe-payments',
         name: 'Stripe Payments',
         type: 'payment',
         provider: 'Stripe',
         status: 'disconnected',
         config: {
-          publishableKey: null,
-          secretKey: null,
-          webhookSecret: null
+          publishableKey: '',
+          secretKey: '',
+          webhookSecret: '',
         },
         endpoints: [
           '/v1/customers',
           '/v1/subscriptions',
-          '/v1/invoices',
-          '/v1/payment_intents'
+          '/v1/invoices'
         ],
         syncFrequency: 'realtime'
       },
@@ -427,10 +428,10 @@ export class APIManager {
   }
 
   updateEndpoint(id: string, updates: Partial<APIEndpoint>): boolean {
-    const endpoint = this.endpoints.get(id);
-    if (!endpoint) return false;
-
-    this.endpoints.set(id, { ...endpoint, ...updates });
+    const existing = this.endpoints.get(id);
+    if (!existing) return false;
+    
+    this.endpoints.set(id, { ...existing, ...updates });
     return true;
   }
 
@@ -444,14 +445,14 @@ export class APIManager {
     if (!endpoint?.rateLimit) return true;
 
     const key = `${endpointId}:${clientId}`;
-    const limiter = this.rateLimiters.get(key);
     const now = Date.now();
+    const limiter = this.rateLimiters.get(key);
 
     if (!limiter || now > limiter.resetTime) {
       // Reset or initialize rate limiter
       this.rateLimiters.set(key, {
         count: 1,
-        resetTime: now + endpoint.rateLimit.windowMs
+        resetTime: now + endpoint.rateLimit.windowMs,
       });
       return true;
     }
@@ -474,10 +475,10 @@ export class APIManager {
   }
 
   updateWebhook(id: string, updates: Partial<Webhook>): boolean {
-    const webhook = this.webhooks.get(id);
-    if (!webhook) return false;
-
-    this.webhooks.set(id, { ...webhook, ...updates });
+    const existing = this.webhooks.get(id);
+    if (!existing) return false;
+    
+    this.webhooks.set(id, { ...existing, ...updates });
     return true;
   }
 
@@ -485,7 +486,7 @@ export class APIManager {
     return this.webhooks.delete(id);
   }
 
-  async triggerWebhook(webhookId: string, event: string, data: any): Promise<boolean> {
+  async triggerWebhook(webhookId: string, event: string, data: unknown): Promise<boolean> {
     const webhook = this.webhooks.get(webhookId);
     if (!webhook || !webhook.active || !webhook.events.includes(event)) {
       return false;
@@ -496,17 +497,23 @@ export class APIManager {
         event,
         data,
         timestamp: new Date().toISOString(),
-        webhook_id: webhookId
+        webhookId,
       };
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Emma-AI-Webhook/1.0',
+        ...webhook.headers,
+      };
+
+      if (webhook.secret) {
+        headers['X-Webhook-Signature'] = this.generateWebhookSignature(payload, webhook.secret);
+      }
 
       const response = await fetch(webhook.url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Webhook-Signature': this.generateWebhookSignature(payload, webhook.secret),
-          ...webhook.headers
-        },
-        body: JSON.stringify(payload)
+        headers,
+        body: JSON.stringify(payload),
       });
 
       return response.ok;
@@ -516,11 +523,10 @@ export class APIManager {
     }
   }
 
-  private generateWebhookSignature(payload: any, secret?: string): string {
-    if (!secret) return '';
-    
-    // In a real implementation, use crypto.createHmac
-    return `sha256=${Buffer.from(JSON.stringify(payload) + secret).toString('base64')}`;
+  private generateWebhookSignature(payload: unknown, secret?: string): string {
+    // In a real implementation, you'd use crypto.createHmac
+    // This is a simplified version for demo purposes
+    return `sha256=${Buffer.from(JSON.stringify(payload) + (secret || '')).toString('base64')}`;
   }
 
   // Third-party Integration Management
@@ -535,16 +541,16 @@ export class APIManager {
   updateIntegrationStatus(id: string, status: ThirdPartyIntegration['status']): boolean {
     const integration = this.integrations.get(id);
     if (!integration) return false;
-
+    
     integration.status = status;
     integration.lastSync = status === 'connected' ? new Date() : integration.lastSync;
     return true;
   }
 
-  updateIntegrationConfig(id: string, config: Record<string, any>): boolean {
+  updateIntegrationConfig(id: string, config: Record<string, unknown>): boolean {
     const integration = this.integrations.get(id);
     if (!integration) return false;
-
+    
     integration.config = { ...integration.config, ...config };
     return true;
   }
@@ -556,22 +562,22 @@ export class APIManager {
     }
 
     try {
-      // Mock integration test
+      // Mock integration test - in reality, you'd make actual API calls
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Simulate different test results
-      const success = Math.random() > 0.2; // 80% success rate
+      // Simulate random success/failure for demo
+      const success = Math.random() > 0.3;
       
       if (success) {
         this.updateIntegrationStatus(id, 'connected');
-        return { success: true, message: 'Integration test successful' };
+        return { success: true, message: `Successfully connected to ${integration.name}` };
       } else {
         this.updateIntegrationStatus(id, 'error');
-        return { success: false, message: 'Integration test failed: Authentication error' };
+        return { success: false, message: `Failed to connect to ${integration.name}: Invalid credentials` };
       }
     } catch (error) {
       this.updateIntegrationStatus(id, 'error');
-      return { success: false, message: `Integration test failed: ${error}` };
+      return { success: false, message: `Connection test failed: ${error}` };
     }
   }
 
@@ -582,7 +588,7 @@ export class APIManager {
     }
 
     try {
-      // Mock sync process
+      // Mock sync operation
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const syncedRecords = Math.floor(Math.random() * 100) + 10;
@@ -590,52 +596,24 @@ export class APIManager {
       
       return { success: true, syncedRecords };
     } catch (error) {
-      console.error(`Sync failed for integration ${id}:`, error);
+      console.error(`Sync failed for ${integration.name}:`, error);
       return { success: false, syncedRecords: 0 };
     }
   }
 
   // API Documentation Generation
-  generateOpenAPISpec(): any {
-    const spec = {
-      openapi: '3.0.0',
-      info: {
-        title: 'Emma AI Customer Success API',
-        version: '1.0.0',
-        description: 'RESTful API for Emma AI Customer Success Manager'
-      },
-      servers: [
-        {
-          url: '/api',
-          description: 'Production server'
-        }
-      ],
-      paths: {} as any,
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT'
-          },
-          apiKeyAuth: {
-            type: 'apiKey',
-            in: 'header',
-            name: 'X-API-Key'
-          }
-        }
-      }
-    };
-
-    // Generate paths from endpoints
+  generateOpenAPISpec(): Record<string, unknown> {
+    const paths: Record<string, unknown> = {};
+    
     this.endpoints.forEach(endpoint => {
-      const path = endpoint.path.replace(/:(\w+)/g, '{$1}');
+      const pathKey = endpoint.path.replace(/:(\w+)/g, '{$1}');
+      const methodKey = endpoint.method.toLowerCase();
       
-      if (!spec.paths[path]) {
-        spec.paths[path] = {};
+      if (!paths[pathKey]) {
+        paths[pathKey] = {};
       }
 
-      spec.paths[path][endpoint.method.toLowerCase()] = {
+      (paths[pathKey] as Record<string, unknown>)[methodKey] = {
         summary: endpoint.name,
         description: endpoint.description,
         parameters: endpoint.parameters.map(param => ({
@@ -645,8 +623,9 @@ export class APIManager {
           description: param.description,
           schema: {
             type: param.type,
-            example: param.example
-          }
+            example: param.example,
+            ...param.validation,
+          },
         })),
         responses: endpoint.responses.reduce((acc, response) => {
           acc[response.statusCode] = {
@@ -654,19 +633,49 @@ export class APIManager {
             content: {
               'application/json': {
                 schema: response.schema,
-                example: response.example
-              }
-            }
+                example: response.example,
+              },
+            },
           };
           return acc;
-        }, {} as any),
-        security: endpoint.authentication !== 'none' ? [
-          { [endpoint.authentication === 'bearer' ? 'bearerAuth' : 'apiKeyAuth']: [] }
-        ] : []
+        }, {} as Record<string, unknown>),
+        security: endpoint.authentication !== 'none' ? [{ [endpoint.authentication]: [] }] : [],
       };
     });
 
-    return spec;
+    return {
+      openapi: '3.0.0',
+      info: {
+        title: 'Emma AI Customer Success API',
+        version: '1.0.0',
+        description: 'API for managing customer success operations',
+      },
+      servers: [
+        {
+          url: 'https://api.emma-ai.com',
+          description: 'Production server',
+        },
+        {
+          url: 'https://staging-api.emma-ai.com',
+          description: 'Staging server',
+        },
+      ],
+      paths,
+      components: {
+        securitySchemes: {
+          bearer: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+          'api-key': {
+            type: 'apiKey',
+            in: 'header',
+            name: 'X-API-Key',
+          },
+        },
+      },
+    };
   }
 
   // Analytics and Monitoring
@@ -677,18 +686,18 @@ export class APIManager {
     topEndpoints: Array<{ endpoint: string; requests: number }>;
     rateLimitHits: number;
   } {
-    // Mock analytics data
+    // Mock analytics data - in reality, you'd collect this from actual usage
     return {
-      totalRequests: Math.floor(Math.random() * 10000) + 5000,
-      averageResponseTime: Math.floor(Math.random() * 200) + 100,
-      errorRate: Math.random() * 0.05, // 0-5% error rate
+      totalRequests: 15420,
+      averageResponseTime: 245, // ms
+      errorRate: 2.3, // percentage
       topEndpoints: [
-        { endpoint: '/api/clients', requests: 1250 },
-        { endpoint: '/api/clients/:id', requests: 890 },
-        { endpoint: '/api/ai/analyze', requests: 445 },
-        { endpoint: '/api/webhooks', requests: 234 }
+        { endpoint: '/api/clients', requests: 8500 },
+        { endpoint: '/api/agent/analyze', requests: 3200 },
+        { endpoint: '/api/comms/suggest', requests: 2100 },
+        { endpoint: '/api/webhooks', requests: 1620 },
       ],
-      rateLimitHits: Math.floor(Math.random() * 50) + 10
+      rateLimitHits: 45,
     };
   }
 }
