@@ -29,8 +29,6 @@ interface Client {
 interface Filters {
   status: string;
   health: string;
-  sortBy: string;
-  sortOrder: string;
 }
 
 interface ClientListProps {
@@ -127,6 +125,8 @@ export function ClientList({ clients, filters, onFilterChange, onClientSelect }:
     return { icon: '➡️', color: 'text-slate-200' };
   };
 
+
+
   return (
     <div className="space-y-6">
       {/* Health Score Guide */}
@@ -205,31 +205,7 @@ export function ClientList({ clients, filters, onFilterChange, onClientSelect }:
                   <option value="critical">Critical</option>
                 </select>
 
-                {/* Sort By */}
-                <select
-                  value={filters.sortBy}
-                  onChange={(e) => onFilterChange({ sortBy: e.target.value })}
-                  className="filter-select bg-blue-600 px-3 py-2 border border-blue-500 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-white hover:bg-blue-700 transition-colors"
-                >
-                  <option value="name">Sort by Name</option>
-                  <option value="company">Sort by Company</option>
-                  <option value="health">Sort by Health</option>
-                  <option value="usage">Sort by Usage</option>
-                  <option value="lastActivity">Sort by Last Activity</option>
-                  <option value="joinDate">Sort by Join Date</option>
-                  <option value="contractValue">Sort by Contract Value</option>
-                </select>
 
-                {/* Sort Order */}
-                <button
-                  onClick={() => onFilterChange({ 
-                    sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc' 
-                  })}
-                  className="filter-button bg-blue-600 px-3 py-2 border border-blue-500 rounded-md text-sm hover:bg-blue-700 transition-colors text-white flex items-center space-x-1"
-                >
-                  <span>{filters.sortOrder === 'asc' ? '↑' : '↓'}</span>
-                  <span>{filters.sortOrder === 'asc' ? 'Ascending' : 'Descending'}</span>
-                </button>
               </div>
             </div>
           </div>
@@ -247,6 +223,7 @@ export function ClientList({ clients, filters, onFilterChange, onClientSelect }:
                 <th className="text-left py-3 px-4 font-semibold text-white">Plan</th>
                 <th className="text-left py-3 px-4 font-semibold text-white">Contract</th>
                 <th className="text-left py-3 px-4 font-semibold text-white">Renewal</th>
+                <th className="text-left py-3 px-4 font-semibold text-white">Tags</th>
                 <th className="text-left py-3 px-4 font-semibold text-white">Last Activity</th>
                 <th className="text-left py-3 px-4 font-semibold text-white">Actions</th>
               </tr>
@@ -261,8 +238,7 @@ export function ClientList({ clients, filters, onFilterChange, onClientSelect }:
                 return (
                   <tr 
                     key={client.id} 
-                    className="hover:bg-gray-700 cursor-pointer transition-colors"
-                    onClick={() => onClientSelect(client)}
+                    className="hover:bg-gray-700 transition-colors"
                   >
                     {/* Client Info */}
                     <td className="py-4 px-4 align-top">
@@ -346,6 +322,45 @@ export function ClientList({ clients, filters, onFilterChange, onClientSelect }:
                       )}
                     </td>
 
+                    {/* Tags */}
+                    <td className="py-4 px-4 align-top">
+                      {client.tags.length > 0 ? (
+                        <div className="flex flex-wrap gap-1 max-w-40">
+                          {client.tags.slice(0, 3).map((tag, index) => {
+                            // Generate consistent colors for tags based on tag content
+                            const tagColors = [
+                              'bg-blue-600 text-blue-100 border-blue-500',
+                              'bg-green-600 text-green-100 border-green-500',
+                              'bg-purple-600 text-purple-100 border-purple-500',
+                              'bg-orange-600 text-orange-100 border-orange-500',
+                              'bg-pink-600 text-pink-100 border-pink-500',
+                              'bg-teal-600 text-teal-100 border-teal-500',
+                              'bg-indigo-600 text-indigo-100 border-indigo-500',
+                              'bg-red-600 text-red-100 border-red-500'
+                            ];
+                            const colorIndex = tag.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % tagColors.length;
+                            
+                            return (
+                              <span 
+                                key={index}
+                                className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border truncate max-w-24 ${tagColors[colorIndex]}`}
+                                title={tag}
+                              >
+                                {tag}
+                              </span>
+                            );
+                          })}
+                          {client.tags.length > 3 && (
+                            <span className="text-xs text-blue-400 font-medium">
+                              +{client.tags.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-sm text-slate-400">-</span>
+                      )}
+                    </td>
+
                     {/* Last Activity */}
                     <td className="py-4 px-4 align-middle">
                       <span className="text-sm text-slate-200">
@@ -365,23 +380,6 @@ export function ClientList({ clients, filters, onFilterChange, onClientSelect }:
                         >
                           View
                         </button>
-                        {client.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 min-w-0">
-                            {client.tags.slice(0, 2).map((tag, index) => (
-                              <span 
-                                key={index}
-                                className="inline-block px-2 py-1 text-xs bg-gray-700 text-slate-200 rounded-full border border-gray-600"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                            {client.tags.length > 2 && (
-                              <span className="text-xs text-slate-200 flex-shrink-0">
-                                +{client.tags.length - 2}
-                              </span>
-                            )}
-                          </div>
-                        )}
                       </div>
                     </td>
                   </tr>

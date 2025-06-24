@@ -656,3 +656,138 @@ button.bg-blue-600:hover {
   background-color: #2d3748 !important;
   color: #e2e8f0 !important;
 }
+
+/* Fix for unwanted text selection highlighting on interactive elements */
+table tbody tr.cursor-pointer {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Prevent selection highlighting on buttons and interactive elements */
+button, .cursor-pointer, 
+table thead th button,
+.inline-block.px-2.py-1 {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Custom selection colors for better visibility when selection is needed */
+::selection {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+::-moz-selection {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+/* Remove unwanted focus outline on table rows */
+table tbody tr:focus {
+  outline: none !important;
+}
+
+/* Improve hover states without selection issues */
+table tbody tr:hover {
+  background-color: #374151 !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* Specific override for table rows to prevent button styling */
+table tbody tr {
+  background-color: transparent !important;
+  color: inherit !important;
+  border: none !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+}
+
+table tbody tr:not(:hover) {
+  background-color: transparent !important;
+}
+
+/* Ensure table rows don't inherit global button styles */
+table tbody tr.cursor-pointer {
+  background: transparent !important;
+  color: inherit !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+table tbody tr.cursor-pointer:hover {
+  background-color: #374151 !important;
+  color: inherit !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Specific override for client table rows to prevent button styling */
+.client-table-row {
+  background-color: transparent !important;
+  color: inherit !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.client-table-row:hover {
+  background-color: #374151 !important;
+  color: inherit !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.client-table-row:focus {
+  outline: none !important;
+  background-color: #374151 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.client-table-row:active {
+  background-color: #4a5568 !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Force override global button styles for table rows - highest specificity */
+table tbody tr.client-table-row {
+  background-color: transparent !important;
+  color: #e2e8f0 !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+table tbody tr.client-table-row:hover {
+  background-color: #374151 !important;
+  color: #e2e8f0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Override the global button rule specifically for table elements */
+table tr {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+table tr:hover {
+  background-color: #374151 !important;
+  color: inherit !important;
+}
