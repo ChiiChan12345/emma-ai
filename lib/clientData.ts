@@ -1,30 +1,4 @@
-export interface Client {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  status: 'active' | 'inactive' | 'trial' | 'churned';
-  joinDate: string;
-  lastActivity: string;
-  plan: string;
-  usage: {
-    currentMonth: number;
-    lastMonth: number;
-    limit: number;
-  };
-  health: 'healthy' | 'at-risk' | 'critical';
-  healthScore: number; // 0-100 score
-  communications: Array<{
-    type: 'email' | 'sms' | 'call';
-    date: string;
-    subject: string;
-    status: 'sent' | 'opened' | 'replied';
-  }>;
-  tags: string[];
-  notes: string;
-  contractValue: number;
-  nextRenewal?: string;
-}
+import { Client } from './types';
 
 // Health scoring logic - explains how tags are determined
 export function calculateHealthScore(client: Client): number {

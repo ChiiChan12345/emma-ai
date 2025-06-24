@@ -10,51 +10,7 @@ import { IntegrationsPage } from '../components/IntegrationsPage';
 import { AppSettingsPage } from '../components/AppSettingsPage';
 import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
 import CommunicationsHub from '../../components/CommunicationsHub';
-
-
-interface Client {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  status: 'active' | 'inactive' | 'trial' | 'churned';
-  joinDate: string;
-  lastActivity: string;
-  plan: string;
-  usage: {
-    currentMonth: number;
-    lastMonth: number;
-    limit: number;
-  };
-  health: 'healthy' | 'at-risk' | 'critical';
-  healthScore: number;
-  communications: Array<{
-    type: 'email' | 'sms' | 'call';
-    date: string;
-    subject: string;
-    status: 'sent' | 'opened' | 'replied';
-  }>;
-  tags: string[];
-  notes: string;
-  contractValue: number;
-  nextRenewal?: string;
-}
-
-interface Summary {
-  total: number;
-  byStatus: {
-    active: number;
-    trial: number;
-    inactive: number;
-    churned: number;
-  };
-  byHealth: {
-    healthy: number;
-    'at-risk': number;
-    critical: number;
-  };
-  averageUsage: number;
-}
+import { Client, Summary, Filters } from '../../lib/types';
 
 export default function Dashboard() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -68,11 +24,9 @@ export default function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     status: 'all',
-    health: 'all',
-    sortBy: 'name',
-    sortOrder: 'asc'
+    health: 'all'
   });
 
   useEffect(() => {
@@ -109,8 +63,6 @@ export default function Dashboard() {
       
       if (filters.status !== 'all') params.append('status', filters.status);
       if (filters.health !== 'all') params.append('health', filters.health);
-      params.append('sortBy', filters.sortBy);
-      params.append('sortOrder', filters.sortOrder);
 
       const response = await fetch(`/api/clients?${params.toString()}`);
       const data = await response.json();

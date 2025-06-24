@@ -6,22 +6,7 @@ import CommunicationAutomation from '../lib/communicationAutomation';
 import PerformanceOptimizer from '../lib/performance';
 import DesignSystem from '../lib/designSystem';
 
-interface Client {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  status: 'active' | 'inactive' | 'trial' | 'churned';
-  health: 'healthy' | 'at-risk' | 'critical';
-  healthScore: number;
-  contractValue: number;
-  lastActivity: string;
-  usage: {
-    currentMonth: number;
-    lastMonth: number;
-    limit: number;
-  };
-}
+import { Client } from '../lib/types';
 
 interface AIInsights {
   churnRisk: {

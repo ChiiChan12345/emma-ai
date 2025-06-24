@@ -1,42 +1,4 @@
-interface Client {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  status: 'active' | 'inactive' | 'trial' | 'churned';
-  joinDate: string;
-  lastActivity: string;
-  plan: string;
-  usage: {
-    currentMonth: number;
-    lastMonth: number;
-    limit: number;
-  };
-  health: 'healthy' | 'at-risk' | 'critical';
-  healthScore: number;
-  communications: Array<{
-    type: 'email' | 'sms' | 'call';
-    date: string;
-    subject: string;
-    status: 'sent' | 'opened' | 'replied';
-  }>;
-  tags: string[];
-  notes: string;
-  contractValue: number;
-  nextRenewal?: string;
-}
-
-interface Filters {
-  status: string;
-  health: string;
-}
-
-interface ClientListProps {
-  clients: Client[];
-  filters: Filters;
-  onFilterChange: (filters: Partial<Filters>) => void;
-  onClientSelect: (client: Client) => void;
-}
+import { Client, Filters, ClientListProps } from '../../lib/types';
 
 export function ClientList({ clients, filters, onFilterChange, onClientSelect }: ClientListProps) {
   const getHealthColor = (health: string) => {

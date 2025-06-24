@@ -2,38 +2,7 @@
 
 import { useState } from 'react';
 
-interface Client {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  status: 'active' | 'inactive' | 'trial' | 'churned';
-  joinDate: string;
-  lastActivity: string;
-  plan: string;
-  usage: {
-    currentMonth: number;
-    lastMonth: number;
-    limit: number;
-  };
-  health: 'healthy' | 'at-risk' | 'critical';
-  healthScore: number;
-  communications: Array<{
-    type: 'email' | 'sms' | 'call';
-    date: string;
-    subject: string;
-    status: 'sent' | 'opened' | 'replied';
-  }>;
-  tags: string[];
-  notes: string;
-  contractValue: number;
-  nextRenewal?: string;
-}
-
-interface ClientDetailProps {
-  client: Client;
-  onBack: () => void;
-}
+import { Client, ClientDetailProps } from '../../lib/types';
 
 export function ClientDetail({ client, onBack }: ClientDetailProps) {
   const [analysis, setAnalysis] = useState<string | null>(null);

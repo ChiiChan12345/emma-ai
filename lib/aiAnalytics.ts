@@ -1,4 +1,5 @@
 import { openai } from './openai';
+import { Client } from './types';
 
 export interface PredictiveAnalysis {
   churnProbability: number;
@@ -41,7 +42,7 @@ export interface MLHealthScore {
 }
 
 export class AIAnalytics {
-  static async predictChurnRisk(clientData: any): Promise<PredictiveAnalysis> {
+  static async predictChurnRisk(clientData: Client): Promise<PredictiveAnalysis> {
     try {
       const prompt = `
         Analyze this client data for churn risk prediction:
@@ -91,7 +92,7 @@ export class AIAnalytics {
     }
   }
 
-  static async analyzeSentiment(communications: any[]): Promise<SentimentAnalysis> {
+  static async analyzeSentiment(communications: Client['communications']): Promise<SentimentAnalysis> {
     try {
       const recentComms = communications.slice(-10);
       const prompt = `
@@ -147,7 +148,7 @@ export class AIAnalytics {
     }
   }
 
-  static calculateMLHealthScore(clientData: any): MLHealthScore {
+  static calculateMLHealthScore(clientData: Client): MLHealthScore {
     // Advanced ML-based health scoring algorithm
     const factors = {
       usagePatterns: this.calculateUsageScore(clientData),
@@ -185,7 +186,7 @@ export class AIAnalytics {
     };
   }
 
-  private static calculateUsageScore(clientData: any): number {
+  private static calculateUsageScore(clientData: Client): number {
     const usageRatio = clientData.usage.currentMonth / clientData.usage.limit;
     const lastMonthRatio = clientData.usage.lastMonth / clientData.usage.limit;
     
@@ -211,7 +212,7 @@ export class AIAnalytics {
     return Math.max(0, Math.min(100, score));
   }
 
-  private static calculateEngagementScore(clientData: any): number {
+  private static calculateEngagementScore(clientData: Client): number {
     const daysSinceLastActivity = Math.floor(
       (new Date().getTime() - new Date(clientData.lastActivity).getTime()) / (1000 * 60 * 60 * 24)
     );
@@ -224,9 +225,9 @@ export class AIAnalytics {
     return 10;
   }
 
-  private static calculateSupportScore(clientData: any): number {
+  private static calculateSupportScore(clientData: Client): number {
     // Assume fewer support tickets = better health
-    const supportTickets = clientData.supportTickets || 0;
+    const supportTickets = (clientData as any).supportTickets || 0;
     if (supportTickets === 0) return 100;
     if (supportTickets <= 2) return 80;
     if (supportTickets <= 5) return 60;
@@ -234,15 +235,15 @@ export class AIAnalytics {
     return 20;
   }
 
-  private static calculateFeatureAdoptionScore(clientData: any): number {
+  private static calculateFeatureAdoptionScore(clientData: Client): number {
     // Mock feature adoption calculation
-    const adoptedFeatures = clientData.featuresUsed || [];
+    const adoptedFeatures = (clientData as any).featuresUsed || [];
     const totalFeatures = 10; // Assume 10 total features
     const adoptionRate = adoptedFeatures.length / totalFeatures;
     return Math.round(adoptionRate * 100);
   }
 
-  private static calculatePaymentScore(clientData: any): number {
+  private static calculatePaymentScore(clientData: Client): number {
     // Mock payment history calculation
     const status = clientData.status;
     if (status === 'active') return 100;
@@ -251,7 +252,7 @@ export class AIAnalytics {
     return 10; // churned
   }
 
-  private static calculateTrend(clientData: any): { direction: 'improving' | 'declining' | 'stable'; change: number; confidence: number } {
+  private static calculateTrend(clientData: Client): { direction: 'improving' | 'declining' | 'stable'; change: number; confidence: number } {
     // Mock trend calculation based on recent activity
     const usageGrowth = (clientData.usage.currentMonth - clientData.usage.lastMonth) / clientData.usage.lastMonth;
     
