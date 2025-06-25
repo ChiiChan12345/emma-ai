@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { ClientFormData } from '../../lib/types';
 
 interface AddClientModalProps {
   isOpen: boolean;
@@ -9,12 +10,12 @@ interface AddClientModalProps {
 }
 
 export function AddClientModal({ isOpen, onClose, onClientAdded }: AddClientModalProps) {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<ClientFormData>({
     name: '',
     email: '',
     company: '',
-    status: 'trial' as 'trial' | 'active' | 'inactive',
+    status: 'trial',
     plan: 'Trial',
     contractValue: 0,
     notes: '',

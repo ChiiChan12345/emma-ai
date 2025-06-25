@@ -1,37 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AIAnalytics from '../lib/aiAnalytics';
 import CommunicationAutomation from '../lib/communicationAutomation';
 import PerformanceOptimizer from '../lib/performance';
 import DesignSystem from '../lib/designSystem';
 
-import { Client } from '../lib/types';
-
-interface AIInsights {
-  churnRisk: {
-    probability: number;
-    risk: 'low' | 'medium' | 'high' | 'critical';
-    factors: string[];
-  };
-  healthTrends: {
-    improving: number;
-    declining: number;
-    stable: number;
-  };
-  recommendations: string[];
-}
+import { Client, AIInsights, AutomationRule, PerformanceReport } from '../lib/types';
 
 export function EnhancedDashboard() {
   const [clients, setClients] = useState<Client[]>([]);
   const [aiInsights, setAiInsights] = useState<AIInsights | null>(null);
-  const [performanceMetrics, setPerformanceMetrics] = useState<{
-    metrics: any;
-    grade: 'A' | 'B' | 'C' | 'D' | 'F';
-    recommendations: string[];
-  } | null>(null);
-  const [automationRules, setAutomationRules] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceReport | null>(null);
+  const [automationRules, setAutomationRules] = useState<AutomationRule[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const initializeDashboard = useCallback(async () => {
     try {
@@ -201,8 +183,6 @@ export function EnhancedDashboard() {
       console.error('Automation rule creation error:', error);
     }
   };
-
-
 
   if (loading) {
     return (

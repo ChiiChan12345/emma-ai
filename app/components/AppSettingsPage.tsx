@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppSettings } from '../../lib/types';
 
 // Modern Toggle Switch Component
 interface ToggleSwitchProps {
@@ -33,7 +34,7 @@ function ToggleSwitch({ checked, onChange, label, description }: ToggleSwitchPro
 }
 
 export function AppSettingsPage() {
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<AppSettings>({
     notifications: {
       email: true,
       push: false,
@@ -72,11 +73,11 @@ export function AppSettingsPage() {
     }
   });
 
-  const updateSetting = (category: string, key: string, value: any) => {
+  const updateSetting = (category: keyof AppSettings, key: string, value: boolean | number) => {
     setSettings(prev => ({
       ...prev,
       [category]: {
-        ...prev[category as keyof typeof prev],
+        ...prev[category],
         [key]: value
       }
     }));

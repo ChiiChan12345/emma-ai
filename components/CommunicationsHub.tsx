@@ -86,7 +86,7 @@ export default function CommunicationsHub() {
   const [communications, setCommunications] = useState<CommunicationRecord[]>([]);
   const [automationRules, setAutomationRules] = useState<AutomationRule[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Enhanced modal states
   const [templateUsageModal, setTemplateUsageModal] = useState<TemplateUsageModal>({

@@ -19,8 +19,8 @@ interface Integration {
 }
 
 export function IntegrationsPage() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
 
   const integrations: Integration[] = [

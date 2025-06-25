@@ -12,12 +12,13 @@ interface DocumentSection {
 }
 
 interface HelpCenterProps {
-  // Future expansion props can go here
+  // Reserved for future expansion - keeping interface for consistency
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 }
 
-const HelpCenter = ({}: HelpCenterProps) => {
+export function HelpCenter(props: HelpCenterProps) {
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const documentSections: DocumentSection[] = [
     {
@@ -1700,6 +1701,6 @@ If you have questions about system requirements or need help with setup, contact
       </div>
     </div>
   );
-};
+}
 
 export default HelpCenter; 

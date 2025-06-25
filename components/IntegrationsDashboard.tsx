@@ -36,7 +36,7 @@ export function IntegrationsDashboard() {
   const [endpoints, setEndpoints] = useState<APIEndpoint[]>([]);
   const [webhooks, setWebhooks] = useState<Webhook[]>([]);
   const [activeTab, setActiveTab] = useState<'integrations' | 'endpoints' | 'webhooks'>('integrations');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     initializeDashboard();

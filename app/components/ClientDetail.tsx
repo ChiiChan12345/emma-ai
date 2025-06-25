@@ -6,11 +6,11 @@ import { ClientDetailProps } from '../../lib/types';
 
 export function ClientDetail({ client, onBack }: ClientDetailProps) {
   const [analysis, setAnalysis] = useState<string | null>(null);
-  const [suggestion, setSuggestion] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [analysisType, setAnalysisType] = useState('comprehensive');
-  const [communicationType, setCommunicationType] = useState('email');
-  const [context, setContext] = useState('');
+  const [suggestion, setSuggestion] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [analysisType, setAnalysisType] = useState<string>('comprehensive');
+  const [communicationType, setCommunicationType] = useState<string>('email');
+  const [context, setContext] = useState<string>('');
 
   const getHealthColor = (health: string) => {
     switch (health) {

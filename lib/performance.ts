@@ -1,3 +1,5 @@
+import { CacheEntry, PerformanceMetrics, PerformanceReport } from './types';
+
 export interface PerformanceMetrics {
   loadTime: number;
   renderTime: number;
@@ -20,14 +22,14 @@ export interface LazyLoadOptions {
 }
 
 export class PerformanceCache {
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cache = new Map<string, CacheEntry>();
   private maxSize: number;
 
   constructor(maxSize: number = 100) {
     this.maxSize = maxSize;
   }
 
-  set(key: string, data: any, ttl: number = 300000): void { // Default 5 minutes
+  set<T>(key: string, data: T, ttl: number = 300000): void { // Default 5 minutes
     // Remove oldest entries if cache is full
     if (this.cache.size >= this.maxSize) {
       const firstKey = this.cache.keys().next().value;
@@ -43,7 +45,7 @@ export class PerformanceCache {
     });
   }
 
-  get(key: string): any | null {
+  get<T>(key: string): T | null {
     const entry = this.cache.get(key);
     
     if (!entry) {
@@ -56,7 +58,7 @@ export class PerformanceCache {
       return null;
     }
 
-    return entry.data;
+    return entry.data as T;
   }
 
   has(key: string): boolean {
@@ -322,24 +324,22 @@ export class PerformanceOptimizer {
     }
   }
 
-  static debounce<T extends (...args: any[]) => any>(
+  static debounce<T extends (...args: unknown[]) => unknown>(
     func: T,
     delay: number
   ): (...args: Parameters<T>) => void {
     let timeoutId: NodeJS.Timeout;
-    
     return (...args: Parameters<T>) => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => func.apply(this, args), delay);
     };
   }
 
-  static throttle<T extends (...args: any[]) => any>(
+  static throttle<T extends (...args: unknown[]) => unknown>(
     func: T,
     limit: number
   ): (...args: Parameters<T>) => void {
     let inThrottle: boolean;
-    
     return (...args: Parameters<T>) => {
       if (!inThrottle) {
         func.apply(this, args);

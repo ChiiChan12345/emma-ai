@@ -10,7 +10,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ currentPage, onPageChange, isCollapsed: externalCollapsed, onToggle }: SidebarProps) {
-  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState<boolean>(false);
   
   // Use external collapsed state if provided, otherwise use internal state
   const isCollapsed = externalCollapsed !== undefined ? externalCollapsed : internalCollapsed;

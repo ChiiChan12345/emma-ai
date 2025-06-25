@@ -1,52 +1,56 @@
 'use client';
 
 import { useState } from 'react';
+import { UserProfile } from '../../lib/types';
 
 export function ProfileSettingsPage() {
-  const [profile, setProfile] = useState({
+  const [profile, setProfile] = useState<UserProfile>({
     business: {
-      companyName: 'Emma AI Inc.',
+      companyName: 'Emma AI Solutions',
       industry: 'Software',
       companySize: '10-50',
       website: 'https://emma-ai.com',
       address: '123 Innovation Drive',
       city: 'San Francisco',
-      state: 'CA',
-      zipCode: '94105',
-      country: 'United States',
-      phone: '+1 (555) 123-4567'
+      state: 'CA'
     },
     personal: {
-      firstName: 'Emma',
-      lastName: 'AI',
-      email: 'admin@emma-ai.com',
-      phone: '+1 (555) 987-6543',
+      firstName: 'Sarah',
+      lastName: 'Johnson',
+      email: 'sarah@emma-ai.com',
+      phone: '+1 (555) 123-4567',
       jobTitle: 'Customer Success Manager',
-      department: 'Customer Success',
-      timezone: 'America/Los_Angeles',
-      language: 'English'
+      department: 'Customer Success'
     },
     preferences: {
+      timezone: 'PST',
+      language: 'English',
       dateFormat: 'MM/DD/YYYY',
       timeFormat: '12-hour',
       currency: 'USD',
-      emailSignature: 'Best regards,\nEmma AI\nCustomer Success Manager'
+      theme: 'Light',
+      notifications: true,
+      emailSignature: 'Best regards,\nSarah Johnson\nCustomer Success Manager'
     },
     security: {
       twoFactorEnabled: false,
-      sessionTimeout: 30,
+      lastPasswordChange: '2024-01-15',
       passwordLastChanged: '2024-01-15',
-      loginNotifications: true
+      loginHistory: [
+        { date: '2024-01-20', ip: '192.168.1.100', location: 'San Francisco, CA' },
+        { date: '2024-01-19', ip: '192.168.1.100', location: 'San Francisco, CA' },
+        { date: '2024-01-18', ip: '10.0.0.50', location: 'Remote Office' }
+      ]
     }
   });
 
-  const [activeTab, setActiveTab] = useState('business');
+  const [activeTab, setActiveTab] = useState<string>('business');
 
-  const handleProfileChange = (category: string, field: string, value: any) => {
+  const handleProfileChange = (category: keyof UserProfile, field: string, value: string | boolean | number) => {
     setProfile(prev => ({
       ...prev,
       [category]: {
-        ...prev[category as keyof typeof prev],
+        ...prev[category],
         [field]: value
       }
     }));

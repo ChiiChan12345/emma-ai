@@ -16,7 +16,7 @@ export function PerformanceDashboard() {
     apiResponseTime: 250,
     cacheHitRate: 0.85
   });
-  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [isMonitoring, setIsMonitoring] = useState<boolean>(false);
 
   useEffect(() => {
     if (isMonitoring) {
