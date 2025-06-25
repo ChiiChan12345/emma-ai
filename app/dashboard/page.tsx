@@ -301,25 +301,25 @@ export default function Dashboard() {
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-sm text-gray-600">New client onboarded: TechCorp Inc.</span>
                   <span className="text-xs text-gray-400">2 hours ago</span>
-                </div>
+                      </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <span className="text-sm text-gray-600">Health score improved for Startup Solutions</span>
                   <span className="text-xs text-gray-400">5 hours ago</span>
-                </div>
-                <div className="flex items-center space-x-3">
+                    </div>
+                    <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                   <span className="text-sm text-gray-600">Follow-up email sent to 3 at-risk clients</span>
                   <span className="text-xs text-gray-400">1 day ago</span>
-                </div>
+                      </div>
               </div>
             </div>
           </div>
         );
-
+      
       case 'clients':
-        return (
-          <div className="p-6">
+          return (
+            <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">Client Management</h2>
@@ -330,11 +330,11 @@ export default function Dashboard() {
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
               >
                 <span>+</span>
-                <span>Add Client</span>
+                  <span>Add Client</span>
               </button>
             </div>
             
-            <ClientList
+            <ClientList 
               clients={clients}
               onClientSelect={handleClientSelect}
               filters={filters}
@@ -354,7 +354,7 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-gray-900">Analytics & Reports</h2>
               <p className="text-gray-600">Deep insights into your customer success metrics</p>
             </div>
-
+            
             {/* Analytics Tabs */}
             <div className="border-b border-gray-200 mb-6">
               <nav className="-mb-px flex space-x-8">
@@ -371,12 +371,12 @@ export default function Dashboard() {
                     {tab}
                   </button>
                 ))}
-              </nav>
+                </nav>
             </div>
 
             {/* Analytics Content */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   {analyticsTab === 'overview' && 'Performance Overview'}
                   {analyticsTab === 'churn' && 'Churn Analysis'}
@@ -385,11 +385,11 @@ export default function Dashboard() {
                 </h3>
                 <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
                   <p className="text-gray-500">Chart placeholder - Analytics coming soon</p>
-                </div>
-              </div>
+                    </div>
+                  </div>
 
               <div className="space-y-6">
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h4 className="font-semibold text-gray-900 mb-4">Key Metrics</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between">
@@ -404,20 +404,20 @@ export default function Dashboard() {
                       <span className="text-gray-600">Client Satisfaction</span>
                       <span className="font-semibold text-blue-600">4.8/5</span>
                     </div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <h4 className="font-semibold text-gray-900 mb-4">Recent Insights</h4>
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li>• 3 clients showed improved engagement this week</li>
                     <li>• Trial conversion rate increased by 15%</li>
                     <li>• Average response time improved to 2.3 hours</li>
                   </ul>
-                </div>
-              </div>
-            </div>
-          </div>
+                    </div>
+                    </div>
+                    </div>
+                  </div>
         );
 
       case 'automation':
@@ -426,47 +426,47 @@ export default function Dashboard() {
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Automation & Workflows</h2>
               <p className="text-gray-600">Automate your customer success processes</p>
-            </div>
+                  </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Active Automations */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Automations</h3>
-                <div className="space-y-4">
+                    <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <div>
+                            <div>
                       <div className="font-medium text-green-900">Welcome Email Sequence</div>
                       <div className="text-sm text-green-700">Triggered on new client signup</div>
-                    </div>
+                            </div>
                     <div className="text-green-600">✓ Active</div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div>
+                            <div>
                       <div className="font-medium text-blue-900">Health Score Alerts</div>
                       <div className="text-sm text-blue-700">Notifies when score drops below 60</div>
-                    </div>
+                            </div>
                     <div className="text-blue-600">✓ Active</div>
-                  </div>
-                  
+                </div>
+
                   <div className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div>
+                      <div>
                       <div className="font-medium text-yellow-900">Renewal Reminders</div>
                       <div className="text-sm text-yellow-700">30 days before renewal date</div>
-                    </div>
+                      </div>
                     <div className="text-yellow-600">⏸ Paused</div>
-                  </div>
-                </div>
-              </div>
+                      </div>
+                      </div>
+                    </div>
 
               {/* Automation Templates */}
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Automation Templates</h3>
-                <div className="space-y-3">
+                    <div className="space-y-3">
                   <button className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="font-medium">Onboarding Workflow</div>
                     <div className="text-sm text-gray-600">Complete onboarding sequence</div>
-                  </button>
+                      </button>
                   
                   <button className="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="font-medium">Churn Prevention</div>
@@ -501,8 +501,8 @@ export default function Dashboard() {
             <div className="max-w-2xl">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">Submit Support Request</h2>
-                <p className="text-gray-600">Get help from our customer success team</p>
-              </div>
+                  <p className="text-gray-600">Get help from our customer success team</p>
+                </div>
 
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <form className="space-y-6">
