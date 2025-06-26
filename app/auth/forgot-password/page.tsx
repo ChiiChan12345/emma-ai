@@ -1,7 +1,8 @@
-'use client';
+"use client"
 
 import { useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 console.log('NEXT_PUBLIC_NEXTAUTH_URL:', process.env.NEXT_PUBLIC_NEXTAUTH_URL);
@@ -10,27 +11,23 @@ console.log('location.origin:', typeof window !== 'undefined' ? window.location.
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+  const [message, setMessage] = useState<string | null>(null);
+  const router = useRouter();
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const handleReset = async (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
     setError(null);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL || location.origin}/auth/callback`,
-    });
-    if (error) {
-      setError(error.message);
-    } else {
-      setMessage('If an account with that email exists, a password reset link has been sent.');
-    }
+    setMessage(null);
+    const redirectTo = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL || window.location.origin}/auth/callback?next=/dashboard`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) setError('Password reset failed: ' + error.message);
+    else setMessage('Password reset email sent!');
     setLoading(false);
   };
 
@@ -50,7 +47,7 @@ export default function ForgotPassword() {
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-xl rounded-2xl border border-gray-100">
-          <form className="space-y-6" onSubmit={handleReset}>
+          <form className="space-y-6" onSubmit={handleResetPassword}>
             {message && (
               <div className="mb-4 rounded-md bg-green-600/90 p-3 text-sm text-white shadow">
                 {message}

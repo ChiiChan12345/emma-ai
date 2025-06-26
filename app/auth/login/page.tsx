@@ -20,27 +20,28 @@ export default function Login() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      setLoading(true)
-      setError(null)
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+    const redirectTo = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL || window.location.origin}/auth/callback?next=/dashboard`;
+    alert('OAuth redirectTo: ' + redirectTo); // Debug
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo }
+    });
+    if (error) setError('Google sign-in failed: ' + error.message);
+    setLoading(false);
+  };
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error
-
-      router.push('/dashboard')
-      router.refresh()
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An error occurred')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const handlePasswordSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setError('Sign-in failed: ' + error.message);
+    else router.push('/dashboard');
+    setLoading(false);
+  };
 
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {
     try {
@@ -82,7 +83,7 @@ export default function Login() {
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-xl rounded-2xl border border-gray-100">
-          <form className="space-y-6" onSubmit={handleSignIn}>
+          <form className="space-y-6" onSubmit={handlePasswordSignIn}>
             {error && (
               <div className="mb-4 rounded-md bg-red-600/90 p-3 text-sm text-white shadow">
                 {error}
@@ -159,7 +160,7 @@ export default function Login() {
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => handleOAuthSignIn('google')}
+                  onClick={handleGoogleSignIn}
                   disabled={loading}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
                 >

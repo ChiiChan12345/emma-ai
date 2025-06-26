@@ -79,25 +79,18 @@ export default function SignUp() {
     }
   }
 
-  const handleOAuthSignUp = async (provider: 'google' | 'github') => {
-    try {
-      setLoading(true)
-      setError(null)
-      
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL || location.origin}/auth/callback`
-        }
-      })
-      
-      if (error) throw error
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
-      setError(`${provider === 'google' ? 'Google' : 'GitHub'} signup failed: ${errorMessage}`)
-      setLoading(false)
-    }
-  }
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    setError(null);
+    const redirectTo = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL || window.location.origin}/auth/callback?next=/dashboard`;
+    alert('OAuth redirectTo: ' + redirectTo); // Debug
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo }
+    });
+    if (error) setError('Google sign-up failed: ' + error.message);
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 via-blue-500 to-indigo-700">
@@ -232,7 +225,7 @@ export default function SignUp() {
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => handleOAuthSignUp('google')}
+                  onClick={handleGoogleSignUp}
                   disabled={loading}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:border-gray-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
                 >
