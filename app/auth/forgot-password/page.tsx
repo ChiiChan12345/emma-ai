@@ -21,7 +21,7 @@ export default function ForgotPassword() {
     setMessage(null);
     setError(null);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXTAUTH_URL || location.origin}/auth/callback`,
+      redirectTo: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL || location.origin}/auth/callback`,
     });
     if (error) {
       setError(error.message);
