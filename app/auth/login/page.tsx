@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -61,11 +61,6 @@ export default function Login() {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    // After verifying the user is authenticated
-    router.replace('/dashboard');
-  }, []);
 
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 via-blue-500 to-indigo-700">
