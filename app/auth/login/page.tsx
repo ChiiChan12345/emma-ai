@@ -47,7 +47,8 @@ export default function Login() {
       setLoading(true)
       setError(null)
       
-      const redirectTo = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL || location.origin}/auth/callback?next=/dashboard`;
+      // Hardcoded for debugging production env var issues
+      const redirectTo = `https://main.d952wuc6r07m7.amplifyapp.com/auth/callback?next=/dashboard`;
       console.log('OAuth redirectTo:', redirectTo);
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
