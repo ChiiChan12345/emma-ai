@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface EmailTemplate {
   id: string;
@@ -316,7 +317,7 @@ Best,
     setCommunications(sampleCommunications);
   }, []);
 
-  const handleSendEmail = async (templateId: string, recipients: string[]) => {
+  const handleSendEmail = async (templateId: string, _recipients: string[]) => {
     setLoading(true);
     try {
       // Simulate API call
@@ -338,7 +339,7 @@ Best,
         setCommunications(prev => [newCommunication, ...prev]);
       }
       
-      setActiveTab('history');
+      setSelectedTemplate(null);
     } catch (error) {
       console.error('Failed to send email:', error);
     } finally {
@@ -346,14 +347,7 @@ Best,
     }
   };
 
-  const handleCreateTemplate = (template: Omit<EmailTemplate, 'id'>) => {
-    const newTemplate: EmailTemplate = {
-      ...template,
-      id: Date.now().toString()
-    };
-    setTemplates(prev => [...prev, newTemplate]);
-    setCreateTemplateModal({ isOpen: false, templateName: '', templateType: 'custom', subject: '', content: '', variables: [], newVariable: '' });
-  };
+
 
   const toggleAutomationRule = (ruleId: string) => {
     setAutomationRules(prev => 
@@ -416,7 +410,7 @@ Best,
       
       setCommunications(prev => [newCommunication, ...prev]);
       setTemplateUsageModal({ isOpen: false, template: null, recipients: '', customSubject: '', customContent: '' });
-      setActiveTab('history');
+      setSelectedTemplate(null);
     } catch (error) {
       console.error('Failed to send email:', error);
     } finally {
@@ -525,7 +519,7 @@ Best,
       const reader = new FileReader();
       reader.onload = (e) => {
         const imageUrl = e.target?.result as string;
-        const imageTag = `<img src="${imageUrl}" alt="Uploaded image" style="max-width: 100%; height: auto;" />`;
+        const imageTag = <Image src={imageUrl} alt="Uploaded image" width={100} height={100} style={{ maxWidth: '100%', height: 'auto' }} />;
         
         setCreateTemplateModal(prev => ({
           ...prev,

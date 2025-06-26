@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface Integration {
   id: string;
@@ -829,9 +830,11 @@ export function IntegrationsPage() {
             <div className="text-center">
               <div className="w-12 h-12 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                 {integration.icon.startsWith('http') ? (
-                  <img 
+                  <Image 
                     src={integration.icon} 
                     alt={integration.name}
+                    width={48}
+                    height={48}
                     className="w-8 h-8"
                   />
                 ) : (
@@ -865,9 +868,11 @@ export function IntegrationsPage() {
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 flex items-center justify-center">
                     {selectedIntegration.icon.startsWith('http') ? (
-                      <img 
+                      <Image 
                         src={selectedIntegration.icon} 
                         alt={selectedIntegration.name}
+                        width={48}
+                        height={48}
                         className="w-8 h-8"
                       />
                     ) : (

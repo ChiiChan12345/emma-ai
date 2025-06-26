@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from '@supabase/ssr';
 import { ClientList } from '../components/ClientList';
 import { ClientDetail } from '../components/ClientDetail';
 import { DashboardStats } from '../components/DashboardStats';
@@ -13,18 +13,21 @@ import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
 import CommunicationsHub from '../../components/CommunicationsHub';
 import HelpCenter from '../components/HelpCenter';
 import { Client, Summary, Filters } from '../../lib/types';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Dashboard() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<string>('dashboard');
+  const [clients, setClients] = useState<Client[]>([]);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [summary, setSummary] = useState<Summary | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [showAddClientModal, setShowAddClientModal] = useState<boolean>(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState<boolean>(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [analyticsTab, setAnalyticsTab] = useState<string>('overview');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
   
   // User profile state
   const [userProfile, setUserProfile] = useState<{
@@ -33,15 +36,40 @@ export default function Dashboard() {
     company_name: string;
   } | null>(null);
 
-  const supabase = createClientComponentClient();
+  const router = useRouter();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const [filters, setFilters] = useState<Filters>({
     status: 'all',
     health: 'all'
   });
 
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+
+  // Check authentication status
+  const checkAuth = useCallback(async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        router.push('/auth/login');
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      router.push('/auth/login');
+    } finally {
+      setAuthLoading(false);
+    }
+  }, [supabase, router]);
+
   // Fetch user profile
   const fetchUserProfile = useCallback(async () => {
+    if (!isAuthenticated) return;
+    
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -60,9 +88,11 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
-  }, [supabase]);
+  }, [supabase, isAuthenticated]);
 
   const fetchClients = useCallback(async () => {
+    if (!isAuthenticated) return;
+    
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -86,12 +116,34 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [filters, isAuthenticated]);
 
+  // Initial auth check
   useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  // Fetch data only after authentication is confirmed
+  useEffect(() => {
+    if (isAuthenticated) {
     fetchClients();
-    fetchUserProfile(); // Fetch user profile on mount
-  }, [fetchClients, fetchUserProfile]);
+      fetchUserProfile();
+      // Check for tab query param on mount
+      if (searchParams) {
+        const tab = searchParams.get('tab');
+        if (tab === 'profile-settings') {
+          setCurrentPage('profile-settings');
+        }
+      }
+    }
+  }, [isAuthenticated]);
+
+  // Separate useEffect for filters changes
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchClients();
+    }
+  }, [filters]);
 
   // Close profile dropdown when clicking outside
   useEffect(() => {
@@ -599,6 +651,18 @@ export default function Dashboard() {
         );
     }
   };
+
+  // Show loading screen while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex h-screen bg-gray-50 items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">

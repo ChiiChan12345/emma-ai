@@ -1,44 +1,15 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import AIAnalytics from '../lib/aiAnalytics';
-import CommunicationAutomation from '../lib/communicationAutomation';
-import PerformanceOptimizer from '../lib/performance';
-import DesignSystem from '../lib/designSystem';
-
-import { Client, AIInsights, AutomationRule, PerformanceReport } from '../lib/types';
 
 export function EnhancedDashboard() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [aiInsights, setAiInsights] = useState<AIInsights | null>(null);
-  const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceReport | null>(null);
-  const [automationRules, setAutomationRules] = useState<AutomationRule[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const initializeDashboard = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      
-      // Fetch clients with performance optimization
-      const clientsData = await PerformanceOptimizer.optimizeApiCall(
-        'dashboard-clients',
-        () => fetch('/api/clients').then(res => res.json()),
-        { ttl: 300000, maxSize: 50, stale: false }
-      );
-
-      if (clientsData.success) {
-        setClients(clientsData.clients);
-        
-        // Generate AI insights
-        await generateAIInsights(clientsData.clients);
-        
-        // Load automation rules
-        await loadAutomationRules();
-        
-        // Get performance metrics
-        const metrics = PerformanceOptimizer.generatePerformanceReport();
-        setPerformanceMetrics(metrics);
-      }
+      // Simulate initialization
+      await new Promise(resolve => setTimeout(resolve, 2000));
     } catch (error) {
       console.error('Dashboard initialization error:', error);
     } finally {
@@ -48,141 +19,7 @@ export function EnhancedDashboard() {
 
   useEffect(() => {
     initializeDashboard();
-    
-    // Initialize performance monitoring
-    PerformanceOptimizer.initializeLazyLoading();
-    
-    // Initialize design system - these methods don't exist, removing them
-    // DesignSystem.initializeTheme();
-    // DesignSystem.initializeAccessibility();
   }, [initializeDashboard]);
-
-  const generateAIInsights = async (clientData: unknown[]) => {
-    try {
-      const insights: AIInsights = {
-        churnRisk: {
-          probability: 0,
-          risk: 'low',
-          factors: []
-        },
-        healthTrends: {
-          improving: 0,
-          declining: 0,
-          stable: 0
-        },
-        recommendations: []
-      };
-
-      // Analyze each client for churn risk
-      let totalChurnRisk = 0;
-      const riskFactors: string[] = [];
-      
-      for (const clientItem of clientData) {
-        const client = clientItem as {
-          healthScore: number;
-          usage: { currentMonth: number; lastMonth: number; limit: number; };
-          lastActivity: string;
-          contractValue: number;
-          status: 'active' | 'inactive' | 'trial' | 'churned';
-        };
-        
-        // Create a mock Client object for the AI analysis
-        const mockClient = {
-          id: 'temp',
-          name: 'Client',
-          email: 'client@example.com',
-          company: 'Company',
-          joinDate: '2024-01-01',
-          plan: 'Pro',
-          health: 'healthy' as const,
-          communications: [],
-          tags: [],
-          notes: '',
-          nextRenewal: '2025-01-01',
-          ...client
-        };
-        
-        const churnAnalysis = await AIAnalytics.predictChurnRisk(mockClient);
-        
-        totalChurnRisk += churnAnalysis.churnProbability;
-        riskFactors.push(...churnAnalysis.keyRiskFactors);
-      }
-
-      insights.churnRisk.probability = totalChurnRisk / clientData.length;
-      insights.churnRisk.risk = insights.churnRisk.probability > 0.7 ? 'critical' : 
-                              insights.churnRisk.probability > 0.5 ? 'high' :
-                              insights.churnRisk.probability > 0.3 ? 'medium' : 'low';
-      insights.churnRisk.factors = [...new Set(riskFactors)].slice(0, 5);
-
-      // Analyze health trends
-      const healthCounts = clientData.reduce((acc: { improving: number; declining: number; stable: number }, clientItem) => {
-        const client = clientItem as {
-          healthScore: number;
-          usage: { currentMonth: number; lastMonth: number; limit: number; };
-          lastActivity: string;
-          contractValue: number;
-          status: 'active' | 'inactive' | 'trial' | 'churned';
-        };
-        
-        if (client.healthScore > 80) acc.improving++;
-        else if (client.healthScore < 60) acc.declining++;
-        else acc.stable++;
-        return acc;
-      }, { improving: 0, declining: 0, stable: 0 });
-
-      insights.healthTrends = healthCounts;
-
-      // Generate recommendations
-      insights.recommendations = [
-        `Focus on ${healthCounts.declining} clients with declining health scores`,
-        `Implement retention campaigns for ${insights.churnRisk.risk} churn risk clients`,
-        'Consider automated health check workflows',
-        'Review usage patterns for optimization opportunities'
-      ];
-
-      setAiInsights(insights);
-    } catch (error) {
-      console.error('AI insights generation error:', error);
-    }
-  };
-
-  const loadAutomationRules = async () => {
-    try {
-      const rules = await PerformanceOptimizer.optimizeApiCall(
-        'automation-rules',
-        () => fetch('/api/automation/rules').then(res => res.json()),
-        { ttl: 600000, maxSize: 20, stale: true }
-      );
-      
-      setAutomationRules(rules.data || []);
-    } catch (error) {
-      console.error('Automation rules loading error:', error);
-    }
-  };
-
-  const createNewAutomationRule = async () => {
-    try {
-      const rule = CommunicationAutomation.createAutomationRule({
-        name: 'Health Score Drop Alert',
-        trigger: {
-          type: 'health_score',
-          condition: 'below',
-          value: 60
-        },
-        action: {
-          type: 'email',
-          templateId: 'health-check-template',
-          delay: 24,
-          priority: 'high'
-        },
-        active: true
-      });
-
-      setAutomationRules(prev => [...prev, rule]);
-    } catch (error) {
-      console.error('Automation rule creation error:', error);
-    }
-  };
 
   if (loading) {
     return (

@@ -565,7 +565,7 @@ export class DatabaseMigrationManager {
     };
   }
 
-  private async executeSql(sql: string): Promise<void> {
+  private async executeSql(_sql: string): Promise<void> {
     // Mock SQL execution - in real implementation, use database connection
     await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
     
@@ -675,7 +675,7 @@ export class DatabaseMigrationManager {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       return { success: true, message: 'Database connection successful' };
-    } catch (error) {
+    } catch (_error) {
       return { success: false, message: 'Connection failed' };
     }
   }

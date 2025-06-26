@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -13,8 +13,12 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,24 +48,28 @@ export default function SignUp() {
         try {
           const { error: profileError } = await supabase
             .from('profiles')
-            .upsert({
-              id: data.user.id,
-              email: data.user.email,
-              full_name: fullName,
-              company_name: companyName,
-            })
+            .insert([
+              {
+                id: data.user.id,
+                full_name: fullName,
+                company_name: companyName,
+                email: data.user.email,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }
+            ])
           
           if (profileError) {
             console.log('Profile creation error (this might be expected if trigger worked):', profileError)
           }
-        } catch (profileError) {
+        } catch (_error) {
           console.log('Profile creation failed, but user was created successfully')
         }
         
         router.push('/dashboard')
       }
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred')
       console.error('Signup error:', error)
     } finally {
       setLoading(false)
@@ -81,41 +89,39 @@ export default function SignUp() {
       })
       
       if (error) throw error
-    } catch (error: any) {
-      setError(`${provider === 'google' ? 'Google' : 'GitHub'} signup failed: ${error.message}`)
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      setError(`${provider === 'google' ? 'Google' : 'GitHub'} signup failed: ${errorMessage}`)
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 via-blue-500 to-indigo-700">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Logo and Header */}
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
-            <span className="text-white font-bold text-xl">E</span>
+        <div className="flex flex-col items-center mb-6">
+          <div className="bg-white rounded-full shadow-lg p-4 flex items-center justify-center" style={{ width: 64, height: 64 }}>
+            {/* Placeholder logo SVG */}
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="20" fill="#6366F1" />
+              <text x="50%" y="55%" textAnchor="middle" fill="white" fontSize="20" fontFamily="Arial" dy=".3em">E</text>
+            </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Create your account
-          </h2>
-          <p className="text-gray-600 text-sm">
-            Start your free trial of Emma AI
-          </p>
+          <h2 className="text-3xl font-extrabold text-white mt-4 mb-2 tracking-tight">Create your account</h2>
+          <p className="text-blue-100 text-sm">Start your free trial of Emma AI</p>
         </div>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 shadow-sm rounded-lg border border-gray-200">
+        <div className="bg-white py-8 px-6 shadow-xl rounded-2xl border border-gray-100">
           <form className="space-y-6" onSubmit={handleSignUp}>
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-                {error}
+            {message && (
+              <div className="mb-4 rounded-md bg-green-600/90 p-3 text-sm text-white shadow">
+                {message}
               </div>
             )}
-
-            {message && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm">
-                {message}
+            {error && (
+              <div className="mb-4 rounded-md bg-red-600/90 p-3 text-sm text-white shadow">
+                {error}
               </div>
             )}
 
@@ -177,7 +183,7 @@ export default function SignUp() {
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="new-password"
                 required
                 value={password}
@@ -254,9 +260,14 @@ export default function SignUp() {
           <p className="text-sm text-gray-600">
             Already have an account?{' '}
             <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
-              Sign in
+              Log in
             </Link>
           </p>
+          <div className="mt-4">
+            <Link href="/" className="inline-block px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-100 font-medium transition-all duration-200">
+              ← Back to Home
+            </Link>
+          </div>
         </div>
       </div>
     </div>

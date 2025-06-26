@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+/* Smooth Scrolling Animation */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced smooth scrolling for all elements */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Custom smooth scroll with better easing for modern browsers */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Respect user's reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    scroll-behavior: auto;
+  }
+}
+
 /* Permanent Dark Theme with High Contrast */
 :root {
   --background: #0f1419;
@@ -349,7 +376,7 @@ a:hover {
 /* Icons */
 svg {
   color: #ffffff !important;
-  fill: currentColor !important;
+  /* fill: currentColor !important; */
 }
 
 /* Dropdown menus */
@@ -498,7 +525,16 @@ main {
 /* Icon fixes */
 svg {
   color: #ffffff !important;
-  fill: currentColor !important;
+  /* fill: currentColor !important; */
+}
+
+/* Ensure icons inside these backgrounds are visible (highest specificity, after global svg rule) */
+.bg-green-50 svg, .bg-yellow-50 svg, .bg-blue-50 svg, .bg-emerald-50 svg, .bg-lime-50 svg, .bg-cyan-50 svg, .bg-pink-50 svg, .bg-purple-50 svg,
+.bg-green-50 .icon, .bg-yellow-50 .icon, .bg-blue-50 .icon, .bg-emerald-50 .icon, .bg-lime-50 .icon, .bg-cyan-50 .icon, .bg-pink-50 .icon, .bg-purple-50 .icon,
+.bg-green-50 [data-icon], .bg-yellow-50 [data-icon], .bg-blue-50 [data-icon], .bg-emerald-50 [data-icon], .bg-lime-50 [data-icon], .bg-cyan-50 [data-icon], .bg-pink-50 [data-icon], .bg-purple-50 [data-icon],
+.bg-green-50 svg[class*='icon'], .bg-yellow-50 svg[class*='icon'], .bg-blue-50 svg[class*='icon'], .bg-emerald-50 svg[class*='icon'], .bg-lime-50 svg[class*='icon'], .bg-cyan-50 svg[class*='icon'], .bg-pink-50 svg[class*='icon'], .bg-purple-50 svg[class*='icon'] {
+  color: #10b981 !important;
+  fill: #10b981 !important;
 }
 
 /* Force visibility for all text elements */
@@ -578,16 +614,6 @@ button, a, .clickable {
   background-color: #1d4ed8 !important;
 }
 
-.filter-button, button[class*="bg-blue"] {
-  background-color: #2563eb !important;
-  border-color: #3b82f6 !important;
-  color: #ffffff !important;
-}
-
-.filter-button:hover, button[class*="bg-blue"]:hover {
-  background-color: #1d4ed8 !important;
-}
-
 /* Specific overrides for client list filters */
 .client-filters select {
   background-color: #2563eb !important;
@@ -617,16 +643,6 @@ select.bg-blue-600 {
 }
 
 select.bg-blue-600:hover {
-  background-color: #1d4ed8 !important;
-}
-
-button.bg-blue-600 {
-  background-color: #2563eb !important;
-  border-color: #3b82f6 !important;
-  color: #ffffff !important;
-}
-
-button.bg-blue-600:hover {
   background-color: #1d4ed8 !important;
 }
 
@@ -1051,4 +1067,138 @@ table tr:hover {
 
 .animate-float-slow {
   animation: float-slow 5s ease-in-out infinite 2s;
+}
+
+/* Enhanced Emma AI Orb Animations */
+@keyframes reverse-spin {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes text-shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes scan-vertical {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(800%);
+    opacity: 0;
+  }
+}
+
+@keyframes scan-horizontal {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(800%);
+    opacity: 0;
+  }
+}
+
+@keyframes gradient-conic {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gradient-radial {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.2);
+  }
+}
+
+.animate-reverse-spin {
+  animation: reverse-spin 8s linear infinite;
+}
+
+.animate-text-shimmer {
+  background-size: 200% 200%;
+  animation: text-shimmer 3s ease-in-out infinite;
+}
+
+.animate-scan-vertical {
+  animation: scan-vertical 4s ease-in-out infinite;
+}
+
+.animate-scan-horizontal {
+  animation: scan-horizontal 5s ease-in-out infinite;
+}
+
+.animate-gradient-conic {
+  animation: gradient-conic 10s linear infinite;
+}
+
+.animate-gradient-radial {
+  animation: gradient-radial 4s ease-in-out infinite;
+}
+
+/* Animation delays */
+.animation-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2000ms;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3000ms;
+}
+
+/* Custom gradient utilities */
+.bg-gradient-conic {
+  background: conic-gradient(var(--tw-gradient-stops));
+}
+
+.bg-gradient-radial {
+  background: radial-gradient(var(--tw-gradient-stops));
+}
+
+/* Override light backgrounds for dark mode to ensure high contrast */
+.bg-green-50, .bg-yellow-50, .bg-blue-50, .bg-emerald-50, .bg-lime-50, .bg-cyan-50, .bg-pink-50, .bg-purple-50 {
+  background-color: #23272f !important;
+  color: #e2e8f0 !important;
+}
+
+/* Fix for toggle buttons to allow Tailwind color utilities to work */
+.toggle-btn {
+  color: inherit !important;
+  background: inherit !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.filter-button, button[class*="bg-blue"] {
+    color: #fff !important;
+    /* background-color: #2563eb !important; */
+    border-color: #3b82f6 !important;
 }

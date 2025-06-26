@@ -45,6 +45,8 @@ export function ProfileSettingsPage() {
   });
 
   const [activeTab, setActiveTab] = useState<string>('business');
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordChangeStatus, setPasswordChangeStatus] = useState<string | null>(null);
 
   const handleProfileChange = (category: keyof UserProfile, field: string, value: string | boolean | number) => {
     setProfile(prev => ({
@@ -58,6 +60,13 @@ export function ProfileSettingsPage() {
 
   const handleSave = () => {
     alert('Profile updated successfully!');
+  };
+
+  const handlePasswordChange = () => {
+    // TODO: Implement password update logic (API call)
+    setPasswordChangeStatus('Password change requested!');
+    setNewPassword('');
+    setTimeout(() => setPasswordChangeStatus(null), 2000);
   };
 
   const tabs = [
@@ -312,14 +321,25 @@ export function ProfileSettingsPage() {
               <div>
                 <div className="font-medium text-gray-700">Change Password</div>
                 <div className="text-sm text-gray-500">Last changed: {profile.security.passwordLastChanged}</div>
-                <button
-                  onClick={() => {
-                    // Implement password change logic here
-                  }}
-                  className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  Change Password
-                </button>
+                <div className="flex items-center mt-2 space-x-2">
+                  <input
+                    type="password"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-md w-64"
+                  />
+                  <button
+                    onClick={handlePasswordChange}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    disabled={!newPassword}
+                  >
+                    Change
+                  </button>
+                </div>
+                {passwordChangeStatus && (
+                  <div className="text-green-600 text-sm mt-1">{passwordChangeStatus}</div>
+                )}
               </div>
             </div>
           </div>

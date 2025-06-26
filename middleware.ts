@@ -1,10 +1,27 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            req.cookies.set(name, value)
+            res.cookies.set(name, value, options)
+          })
+        },
+      },
+    }
+  )
 
   const {
     data: { user },
@@ -16,7 +33,8 @@ export async function middleware(req: NextRequest) {
   }
 
   // If user is not signed in and the current path is not / redirect the user to /
-  if (!user && req.nextUrl.pathname !== '/' && !req.nextUrl.pathname.startsWith('/auth')) {
+  // Allow access to contact page for everyone
+  if (!user && req.nextUrl.pathname !== '/' && !req.nextUrl.pathname.startsWith('/auth') && !req.nextUrl.pathname.startsWith('/contact')) {
     return NextResponse.redirect(new URL('/', req.url))
   }
 

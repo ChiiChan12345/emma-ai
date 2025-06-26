@@ -1,13 +1,4 @@
-import { CacheEntry, PerformanceMetrics, PerformanceReport } from './types';
-
-export interface PerformanceMetrics {
-  loadTime: number;
-  renderTime: number;
-  memoryUsage: number;
-  apiResponseTime: number;
-  cacheHitRate: number;
-  bundleSize: number;
-}
+import { CacheEntry, PerformanceMetrics } from './types';
 
 export interface CacheOptions {
   ttl: number; // Time to live in milliseconds
@@ -222,8 +213,8 @@ export class PerformanceMonitor {
 
   private getMemoryUsage(): number {
     if (typeof window !== 'undefined' && 'memory' in performance) {
-      const memory = (performance as any).memory;
-      return memory.usedJSHeapSize / (1024 * 1024); // Convert to MB
+      const memory = (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory;
+      return memory ? memory.usedJSHeapSize / (1024 * 1024) : 0; // Convert to MB
     }
     return 0;
   }
@@ -296,8 +287,8 @@ export class PerformanceOptimizer {
     const cache = this.monitor.getCache();
     
     // Check cache first
-    const cachedData = cache.get(key);
-    if (cachedData) {
+    const cachedData = cache.get<T>(key);
+    if (cachedData !== null) {
       return cachedData;
     }
 

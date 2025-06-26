@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 
-import { ClientDetailProps } from '../../lib/types';
+import { ClientDetailProps, CommunicationSuggestion } from '../../lib/types';
 
 export function ClientDetail({ client, onBack }: ClientDetailProps) {
   const [analysis, setAnalysis] = useState<string | null>(null);
-  const [suggestion, setSuggestion] = useState<string | null>(null);
+  const [suggestion, setSuggestion] = useState<CommunicationSuggestion | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [analysisType, setAnalysisType] = useState<string>('comprehensive');
   const [communicationType, setCommunicationType] = useState<string>('email');
@@ -264,7 +264,7 @@ export function ClientDetail({ client, onBack }: ClientDetailProps) {
           </button>
         </div>
 
-        {suggestion && (
+        {suggestion && typeof suggestion === 'object' && 'type' in suggestion && (
           <div className="bg-gray-50 rounded-lg p-4 border">
             <h4 className="font-medium text-gray-900 mb-2">Suggested {suggestion.type}:</h4>
             <div className="space-y-3">

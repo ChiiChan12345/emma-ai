@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Brain, BarChart3, Zap, MessageSquare, Users, Globe } from 'lucide-react';
 
 interface Capability {
@@ -131,40 +131,98 @@ export default function InteractiveEmmaOrb() {
             })}
           </svg>
 
-          {/* Central Emma AI Orb */}
+          {/* Central Emma AI Orb - Enhanced Modern Design */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" style={{ zIndex: 3 }}>
             <div className="relative">
-              {/* Outer Glow Ring */}
-              <div className="absolute inset-0 w-72 h-72 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 opacity-30 animate-pulse blur-sm"></div>
+              {/* Outer Orbital Ring - Perfectly aligned with main orb */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border border-blue-400/20 animate-spin-slow">
+                {/* Particles positioned correctly on the ring circumference */}
+                <div className="absolute w-3 h-3 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50" 
+                     style={{ top: '-6px', left: '50%', transform: 'translateX(-50%)' }}></div>
+                <div className="absolute w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-1000 shadow-lg shadow-purple-400/50" 
+                     style={{ bottom: '-4px', left: '50%', transform: 'translateX(-50%)' }}></div>
+              </div>
               
-              {/* Middle Ring */}
-              <div className="absolute inset-4 w-64 h-64 rounded-full bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 opacity-40 animate-spin-slow blur-sm"></div>
+              {/* Secondary Orbital Ring - Perfectly aligned with main orb */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-88 h-88 rounded-full border border-purple-400/15 animate-reverse-spin">
+                {/* Particles positioned correctly on the ring circumference */}
+                <div className="absolute w-2.5 h-2.5 bg-cyan-400 rounded-full animate-pulse delay-500 shadow-lg shadow-cyan-400/50" 
+                     style={{ top: '50%', right: '-5px', transform: 'translateY(-50%)' }}></div>
+                <div className="absolute w-2 h-2 bg-indigo-400 rounded-full animate-pulse delay-1500 shadow-lg shadow-indigo-400/50" 
+                     style={{ top: '50%', left: '-4px', transform: 'translateY(-50%)' }}></div>
+              </div>
               
-              {/* Inner Orb */}
-              <div className="relative w-72 h-72 rounded-full bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 shadow-2xl flex items-center justify-center overflow-hidden border border-white/20">
-                {/* Animated Background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-indigo-400/30 animate-aurora rounded-full"></div>
+              {/* Outer Glow Ring - Enhanced and perfectly centered */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-gradient-to-r from-blue-500/40 via-purple-500/40 via-cyan-500/40 to-indigo-500/40 animate-pulse blur-lg"></div>
+              
+              {/* Middle Energy Ring - Perfectly centered */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-76 h-76 rounded-full bg-gradient-conic from-blue-400/30 via-purple-400/30 via-cyan-400/30 via-indigo-400/30 to-blue-400/30 animate-spin blur-md"></div>
+              
+              {/* Inner Orb - Main Emma AI Circle (72x72 = w-72 h-72) */}
+              <div className="relative w-72 h-72 rounded-full bg-gradient-to-br from-slate-900/90 via-blue-900/80 to-purple-900/90 shadow-2xl flex items-center justify-center overflow-hidden border border-white/10 backdrop-blur-xl">
                 
-                {/* Glass Effect */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 via-transparent to-transparent"></div>
+                {/* Dynamic Animated Background Layers */}
+                <div className="absolute inset-0 bg-gradient-conic from-blue-500/20 via-purple-500/20 via-cyan-500/20 via-indigo-500/20 to-blue-500/20 animate-spin-slow rounded-full"></div>
+                <div className="absolute inset-0 bg-gradient-radial from-transparent via-blue-400/10 to-purple-400/20 animate-pulse rounded-full"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/15 via-transparent via-transparent to-indigo-400/15 animate-aurora rounded-full"></div>
                 
-                {/* Emma AI Text */}
+                {/* Glass Morphism Effect */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/15 via-white/5 to-transparent"></div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tl from-transparent via-white/5 to-white/10"></div>
+                
+                {/* Inner Glow */}
+                <div className="absolute inset-4 rounded-full bg-gradient-radial from-blue-400/20 via-purple-400/10 to-transparent animate-pulse"></div>
+                
+                {/* Emma AI Text - Enhanced */}
                 <div className="relative z-10 text-center">
-                  <div className="text-white font-bold text-4xl mb-3 drop-shadow-lg">Emma</div>
-                  <div className="text-blue-100 text-2xl font-medium drop-shadow-md">AI</div>
+                  <div className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-200 to-purple-300 font-bold text-5xl mb-2 drop-shadow-2xl animate-text-shimmer">
+                    Emma
+                  </div>
+                  <div className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-indigo-200 to-blue-300 text-3xl font-medium drop-shadow-xl">
+                    AI
+                  </div>
+                  <div className="mt-2 text-blue-200/60 text-xs font-light tracking-widest uppercase">
+                    Neural Engine
+                  </div>
                 </div>
 
-                {/* Enhanced Floating Particles */}
+                {/* Enhanced Floating Particles System */}
                 <div className="absolute inset-0">
-                  <div className="absolute top-8 left-12 w-2 h-2 bg-white rounded-full opacity-70 animate-float"></div>
-                  <div className="absolute top-16 right-14 w-2.5 h-2.5 bg-blue-200 rounded-full opacity-60 animate-float-delayed"></div>
-                  <div className="absolute bottom-12 left-16 w-2 h-2 bg-purple-200 rounded-full opacity-80 animate-float-slow"></div>
-                  <div className="absolute bottom-14 right-12 w-2 h-2 bg-indigo-200 rounded-full opacity-70 animate-float"></div>
-                  <div className="absolute top-28 left-8 w-1.5 h-1.5 bg-white rounded-full opacity-60 animate-float-delayed"></div>
-                  <div className="absolute bottom-8 right-28 w-1.5 h-1.5 bg-purple-100 rounded-full opacity-50 animate-float"></div>
-                  <div className="absolute top-20 right-20 w-1 h-1 bg-cyan-200 rounded-full opacity-60 animate-float-slow"></div>
-                  <div className="absolute bottom-20 left-20 w-1 h-1 bg-blue-100 rounded-full opacity-70 animate-float"></div>
+                  {/* Large particles */}
+                  <div className="absolute top-12 left-16 w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-80 animate-float shadow-lg shadow-blue-400/50"></div>
+                  <div className="absolute top-20 right-18 w-3.5 h-3.5 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full opacity-70 animate-float-delayed shadow-lg shadow-purple-400/50"></div>
+                  <div className="absolute bottom-16 left-20 w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full opacity-90 animate-float-slow shadow-lg shadow-cyan-400/50"></div>
+                  <div className="absolute bottom-18 right-16 w-2.5 h-2.5 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full opacity-80 animate-float shadow-lg shadow-indigo-400/50"></div>
+                  
+                  {/* Medium particles */}
+                  <div className="absolute top-32 left-12 w-2 h-2 bg-white/80 rounded-full opacity-70 animate-float-delayed shadow-sm shadow-white/50"></div>
+                  <div className="absolute bottom-12 right-32 w-2 h-2 bg-purple-200/70 rounded-full opacity-60 animate-float shadow-sm shadow-purple-200/40"></div>
+                  <div className="absolute top-24 right-24 w-2 h-2 bg-cyan-200/80 rounded-full opacity-75 animate-float-slow shadow-sm shadow-cyan-200/50"></div>
+                  <div className="absolute bottom-24 left-24 w-2 h-2 bg-blue-200/70 rounded-full opacity-80 animate-float shadow-sm shadow-blue-200/40"></div>
+                  
+                  {/* Small particles */}
+                  <div className="absolute top-16 left-28 w-1.5 h-1.5 bg-white/60 rounded-full opacity-60 animate-float-delayed"></div>
+                  <div className="absolute top-28 right-14 w-1 h-1 bg-purple-100/70 rounded-full opacity-50 animate-float"></div>
+                  <div className="absolute bottom-20 left-32 w-1.5 h-1.5 bg-cyan-100/80 rounded-full opacity-70 animate-float-slow"></div>
+                  <div className="absolute bottom-32 right-20 w-1 h-1 bg-blue-100/60 rounded-full opacity-60 animate-float"></div>
+                  
+                  {/* Micro particles */}
+                  <div className="absolute top-36 left-36 w-1 h-1 bg-white/40 rounded-full opacity-40 animate-float-delayed"></div>
+                  <div className="absolute top-40 right-36 w-0.5 h-0.5 bg-purple-200/50 rounded-full opacity-50 animate-float"></div>
+                  <div className="absolute bottom-36 left-40 w-1 h-1 bg-cyan-200/40 rounded-full opacity-45 animate-float-slow"></div>
+                  <div className="absolute bottom-40 right-40 w-0.5 h-0.5 bg-blue-200/50 rounded-full opacity-40 animate-float"></div>
                 </div>
+                
+                {/* Scanning Lines Effect */}
+                <div className="absolute inset-0 rounded-full overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent animate-scan-vertical"></div>
+                  <div className="absolute top-0 left-0 h-full w-0.5 bg-gradient-to-b from-transparent via-blue-400/60 to-transparent animate-scan-horizontal"></div>
+                </div>
+                
+                {/* Pulse Rings */}
+                <div className="absolute inset-0 rounded-full border border-blue-400/30 animate-ping opacity-40"></div>
+                <div className="absolute inset-2 rounded-full border border-purple-400/20 animate-ping opacity-30 animation-delay-1000"></div>
+                <div className="absolute inset-4 rounded-full border border-cyan-400/20 animate-ping opacity-20 animation-delay-2000"></div>
               </div>
             </div>
           </div>
@@ -281,130 +339,7 @@ export default function InteractiveEmmaOrb() {
 
           {/* Background Particles */}
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-10 left-10 w-2 h-2 bg-blue-400 rounded-full opacity-40 animate-float"></div>
-            <div className="absolute top-20 right-20 w-1.5 h-1.5 bg-purple-400 rounded-full opacity-50 animate-float-delayed"></div>
-            <div className="absolute bottom-20 left-20 w-2.5 h-2.5 bg-indigo-400 rounded-full opacity-35 animate-float-slow"></div>
-            <div className="absolute bottom-10 right-10 w-2 h-2 bg-cyan-400 rounded-full opacity-45 animate-float"></div>
-            <div className="absolute top-1/3 left-5 w-1 h-1 bg-orange-400 rounded-full opacity-60 animate-float-delayed"></div>
-            <div className="absolute top-2/3 right-5 w-1.5 h-1.5 bg-pink-400 rounded-full opacity-40 animate-float-slow"></div>
-            
-            {/* Ambient Text Features */}
-            <div className="absolute top-1/6 left-1/8 text-white/10 text-6xl font-bold rotate-12 animate-pulse select-none">
-              AI
-            </div>
-            <div className="absolute bottom-1/5 right-1/6 text-blue-400/15 text-4xl font-semibold -rotate-12 animate-float select-none">
-              PREDICT
-            </div>
-            <div className="absolute top-2/5 right-1/8 text-purple-400/12 text-3xl font-medium rotate-45 animate-float-delayed select-none">
-              AUTOMATE
-            </div>
-            <div className="absolute bottom-2/5 left-1/6 text-green-400/15 text-3xl font-medium -rotate-45 animate-float-slow select-none">
-              ANALYZE
-            </div>
-            
-            {/* Additional Large Text Elements */}
-            <div className="absolute top-1/8 left-2/3 text-cyan-400/12 text-5xl font-bold rotate-6 animate-float select-none">
-              EMMA
-            </div>
-            <div className="absolute bottom-1/8 left-1/5 text-orange-400/15 text-3xl font-semibold -rotate-12 animate-pulse select-none">
-              INSIGHTS
-            </div>
-            <div className="absolute top-4/5 right-1/5 text-pink-400/12 text-3xl font-medium rotate-15 animate-float-delayed select-none">
-              OPTIMIZE
-            </div>
-            <div className="absolute top-1/12 right-2/5 text-indigo-400/10 text-4xl font-bold -rotate-6 animate-float-slow select-none">
-              SMART
-            </div>
-            <div className="absolute bottom-1/12 left-2/5 text-yellow-400/15 text-3xl font-semibold rotate-8 animate-pulse select-none">
-              SCALE
-            </div>
-            
-            {/* Technical Keywords */}
-            <div className="absolute top-1/7 left-4/5 text-blue-300/20 text-2xl font-mono rotate-3 animate-float select-none">
-              ML
-            </div>
-            <div className="absolute bottom-1/7 right-4/5 text-purple-300/18 text-2xl font-mono -rotate-3 animate-float-delayed select-none">
-              NLP
-            </div>
-            <div className="absolute top-6/7 left-1/6 text-green-300/20 text-2xl font-mono rotate-6 animate-float-slow select-none">
-              API
-            </div>
-            <div className="absolute bottom-6/7 right-1/6 text-cyan-300/18 text-2xl font-mono -rotate-6 animate-pulse select-none">
-              SDK
-            </div>
-            
-            {/* Floating Data Points */}
-            <div className="absolute top-1/10 left-1/3 text-cyan-400/20 text-sm font-mono animate-float select-none">
-              95% accuracy
-            </div>
-            <div className="absolute bottom-1/10 left-3/5 text-orange-400/20 text-sm font-mono animate-float-delayed select-none">
-              real-time insights
-            </div>
-            <div className="absolute top-3/5 left-1/12 text-purple-400/20 text-sm font-mono animate-float-slow select-none">
-              24/7 monitoring
-            </div>
-            <div className="absolute top-2/5 right-1/12 text-blue-400/20 text-sm font-mono animate-float select-none">
-              instant alerts
-            </div>
-            
-            {/* Additional Data Points */}
-            <div className="absolute top-1/4 right-1/5 text-green-400/18 text-xs font-mono animate-float-delayed select-none">
-              50+ data sources
-            </div>
-            <div className="absolute bottom-1/4 left-1/4 text-pink-400/18 text-xs font-mono animate-float-slow select-none">
-              99.9% uptime
-            </div>
-            <div className="absolute top-3/4 left-1/3 text-indigo-400/18 text-xs font-mono animate-pulse select-none">
-              enterprise ready
-            </div>
-            <div className="absolute bottom-3/4 right-1/3 text-yellow-400/18 text-xs font-mono animate-float select-none">
-              GDPR compliant
-            </div>
-            <div className="absolute top-1/5 left-5/6 text-red-400/18 text-xs font-mono animate-float-delayed select-none">
-              SOC 2 certified
-            </div>
-            <div className="absolute bottom-4/5 right-5/6 text-teal-400/18 text-xs font-mono animate-float-slow select-none">
-              ISO 27001
-            </div>
-            
-            {/* Success Metrics */}
-            <div className="absolute top-3/5 left-1/5 text-emerald-400/20 text-sm font-semibold animate-float select-none">
-              +40% retention
-            </div>
-            <div className="absolute bottom-2/5 right-1/7 text-violet-400/20 text-sm font-semibold animate-float-delayed select-none">
-              -60% churn
-            </div>
-            <div className="absolute top-1/9 left-3/4 text-amber-400/20 text-sm font-semibold animate-float-slow select-none">
-              3x ROI
-            </div>
-            <div className="absolute bottom-1/9 right-3/4 text-rose-400/20 text-sm font-semibold animate-pulse select-none">
-              50% faster
-            </div>
-            
-            {/* Geometric Shapes */}
-            <div className="absolute top-12 right-1/3 w-8 h-8 border border-white/10 rotate-45 animate-spin-slow"></div>
-            <div className="absolute bottom-12 left-1/3 w-6 h-6 border border-blue-400/15 rounded-full animate-pulse"></div>
-            <div className="absolute top-2/3 left-12 w-4 h-8 bg-gradient-to-t from-purple-400/10 to-transparent animate-float"></div>
-            <div className="absolute bottom-2/3 right-12 w-8 h-4 bg-gradient-to-r from-cyan-400/10 to-transparent animate-float-delayed"></div>
-            
-            {/* Additional Geometric Elements */}
-            <div className="absolute top-1/4 right-12 w-3 h-12 bg-gradient-to-b from-orange-400/15 to-transparent animate-float-slow"></div>
-            <div className="absolute bottom-1/4 left-12 w-12 h-3 bg-gradient-to-r from-green-400/15 to-transparent animate-pulse"></div>
-            <div className="absolute top-1/8 left-1/4 w-6 h-6 border-2 border-pink-400/20 rotate-12 animate-float"></div>
-            <div className="absolute bottom-1/8 right-1/4 w-8 h-8 border border-indigo-400/15 rounded-full animate-float-delayed"></div>
-            <div className="absolute top-7/8 left-3/4 w-4 h-4 bg-yellow-400/20 rounded-full animate-pulse"></div>
-            <div className="absolute bottom-7/8 right-3/4 w-5 h-5 border border-teal-400/15 rotate-45 animate-float-slow"></div>
-            
-            {/* Dotted Patterns */}
-            <div className="absolute top-1/3 left-1/8 w-2 h-2 bg-blue-400/25 rounded-full animate-float"></div>
-            <div className="absolute top-1/3 left-1/8 w-2 h-2 bg-blue-400/25 rounded-full animate-float" style={{ marginLeft: '8px' }}></div>
-            <div className="absolute top-1/3 left-1/8 w-2 h-2 bg-blue-400/25 rounded-full animate-float" style={{ marginLeft: '16px' }}></div>
-            
-            <div className="absolute bottom-1/3 right-1/8 w-1.5 h-1.5 bg-purple-400/25 rounded-full animate-float-delayed"></div>
-            <div className="absolute bottom-1/3 right-1/8 w-1.5 h-1.5 bg-purple-400/25 rounded-full animate-float-delayed" style={{ marginRight: '6px' }}></div>
-            <div className="absolute bottom-1/3 right-1/8 w-1.5 h-1.5 bg-purple-400/25 rounded-full animate-float-delayed" style={{ marginRight: '12px' }}></div>
-            
-            {/* Corner Accents */}
+            {/* Simple corner accents only - no overlapping text */}
             <div className="absolute top-4 left-4 w-16 h-px bg-gradient-to-r from-white/20 to-transparent animate-pulse"></div>
             <div className="absolute top-4 left-4 w-px h-16 bg-gradient-to-b from-white/20 to-transparent animate-pulse"></div>
             
@@ -417,17 +352,120 @@ export default function InteractiveEmmaOrb() {
             <div className="absolute bottom-4 right-4 w-16 h-px bg-gradient-to-l from-purple-400/20 to-transparent animate-float-slow"></div>
             <div className="absolute bottom-4 right-4 w-px h-16 bg-gradient-to-t from-purple-400/20 to-transparent animate-float-slow"></div>
             
-            {/* Connection Lines */}
-            <div className="absolute top-1/4 left-1/2 w-32 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
-            <div className="absolute bottom-1/4 left-1/2 w-24 h-px bg-gradient-to-r from-transparent via-blue-400/15 to-transparent animate-float"></div>
-            <div className="absolute top-1/2 left-1/4 w-px h-32 bg-gradient-to-b from-transparent via-purple-400/10 to-transparent animate-float-delayed"></div>
-            <div className="absolute top-1/2 right-1/4 w-px h-24 bg-gradient-to-b from-transparent via-green-400/15 to-transparent animate-float-slow"></div>
+            {/* Subtle geometric shapes - positioned to avoid text */}
+            <div className="absolute top-12 right-12 w-8 h-8 border border-white/10 rotate-45 animate-spin-slow"></div>
+            <div className="absolute bottom-12 left-12 w-6 h-6 border border-blue-400/15 rounded-full animate-pulse"></div>
             
-            {/* Additional Connection Lines */}
-            <div className="absolute top-1/6 left-1/3 w-20 h-px bg-gradient-to-r from-transparent via-cyan-400/12 to-transparent animate-float"></div>
-            <div className="absolute bottom-1/6 right-1/3 w-28 h-px bg-gradient-to-l from-transparent via-orange-400/12 to-transparent animate-float-delayed"></div>
-            <div className="absolute top-5/6 left-2/3 w-px h-20 bg-gradient-to-t from-transparent via-pink-400/12 to-transparent animate-float-slow"></div>
-            <div className="absolute bottom-5/6 right-2/3 w-px h-28 bg-gradient-to-b from-transparent via-indigo-400/12 to-transparent animate-pulse"></div>
+            {/* Small floating particles - positioned to avoid text overlap */}
+            <div className="absolute top-16 left-16 w-2 h-2 bg-blue-400 rounded-full opacity-40 animate-float"></div>
+            <div className="absolute top-24 right-24 w-1.5 h-1.5 bg-purple-400 rounded-full opacity-50 animate-float-delayed"></div>
+            <div className="absolute bottom-24 left-24 w-2.5 h-2.5 bg-indigo-400 rounded-full opacity-35 animate-float-slow"></div>
+            <div className="absolute bottom-16 right-16 w-2 h-2 bg-cyan-400 rounded-full opacity-45 animate-float"></div>
+            
+            {/* AI Features Text - Spread across almost the entire div area */}
+            {/* Top row - spread wide */}
+            <div className="absolute top-1/6 left-1/6 text-blue-400/60 text-lg font-bold animate-float select-none">
+              95% Accuracy
+            </div>
+            <div className="absolute top-1/5 left-1/2 transform -translate-x-1/2 text-cyan-400/55 text-xl font-semibold animate-float-delayed select-none">
+              Real-time Analytics
+            </div>
+            <div className="absolute top-1/6 right-1/6 text-purple-400/60 text-lg font-bold animate-float-slow select-none">
+              Smart Automation
+            </div>
+            
+            {/* Upper middle row */}
+            <div className="absolute top-1/3 left-1/8 text-green-400/55 text-base font-semibold animate-float select-none">
+              AI-Powered
+            </div>
+            <div className="absolute top-1/4 left-1/3 text-orange-400/50 text-lg font-medium animate-float-delayed select-none">
+              24/7 Monitoring
+            </div>
+            <div className="absolute top-1/4 right-1/3 text-pink-400/50 text-lg font-medium animate-float-slow select-none">
+              Predictive
+            </div>
+            <div className="absolute top-1/3 right-1/8 text-indigo-400/55 text-base font-semibold animate-float select-none">
+              Enterprise Ready
+            </div>
+            
+            {/* Middle row - wide spread */}
+            <div className="absolute top-1/2 left-1/12 text-teal-400/50 text-base font-medium animate-float-delayed select-none">
+              Machine Learning
+            </div>
+            <div className="absolute top-2/5 left-1/4 text-rose-400/55 text-lg font-semibold animate-float-slow select-none">
+              Natural Language
+            </div>
+            <div className="absolute top-2/5 right-1/4 text-sky-400/55 text-lg font-semibold animate-float select-none">
+              Cloud Native
+            </div>
+            <div className="absolute top-1/2 right-1/12 text-lime-400/50 text-base font-medium animate-float-delayed select-none">
+              API First
+            </div>
+            
+            {/* Lower middle row */}
+            <div className="absolute top-3/5 left-1/8 text-blue-300/55 text-base font-semibold animate-pulse select-none">
+              3x ROI
+            </div>
+            <div className="absolute top-2/3 left-1/3 text-purple-300/50 text-lg font-medium animate-float select-none">
+              50% Faster
+            </div>
+            <div className="absolute top-2/3 right-1/3 text-green-300/50 text-lg font-medium animate-float-delayed select-none">
+              99.9% Uptime
+            </div>
+            <div className="absolute top-3/5 right-1/8 text-orange-300/55 text-base font-semibold animate-float-slow select-none">
+              SOC 2 Certified
+            </div>
+            
+            {/* Bottom row - spread wide */}
+            <div className="absolute bottom-1/6 left-1/6 text-emerald-400/60 text-lg font-bold animate-pulse select-none">
+              +40% Retention
+            </div>
+            <div className="absolute bottom-1/5 left-1/2 transform -translate-x-1/2 text-violet-400/55 text-xl font-semibold animate-float select-none">
+              Instant Insights
+            </div>
+            <div className="absolute bottom-1/6 right-1/6 text-amber-400/60 text-lg font-bold animate-float-delayed select-none">
+              Zero Downtime
+            </div>
+            
+            {/* Additional spread elements - fill more space */}
+            <div className="absolute top-1/8 left-1/4 text-cyan-300/45 text-sm font-medium animate-float-slow select-none">
+              Deep Learning
+            </div>
+            <div className="absolute top-1/8 right-1/4 text-pink-300/45 text-sm font-medium animate-float select-none">
+              Auto-scaling
+            </div>
+            <div className="absolute top-3/8 left-1/10 text-indigo-300/45 text-sm font-medium animate-float-delayed select-none">
+              Real-time
+            </div>
+            <div className="absolute top-3/8 right-1/10 text-teal-300/45 text-sm font-medium animate-float-slow select-none">
+              Intelligent
+            </div>
+            <div className="absolute top-5/8 left-1/10 text-orange-300/45 text-sm font-medium animate-float select-none">
+              Automated
+            </div>
+            <div className="absolute top-5/8 right-1/10 text-purple-300/45 text-sm font-medium animate-float-delayed select-none">
+              Scalable
+            </div>
+            <div className="absolute bottom-1/8 left-1/4 text-green-300/45 text-sm font-medium animate-float-slow select-none">
+              Secure
+            </div>
+            <div className="absolute bottom-1/8 right-1/4 text-blue-300/45 text-sm font-medium animate-float select-none">
+              Reliable
+            </div>
+            
+            {/* Corner elements - extend to edges */}
+            <div className="absolute top-1/10 left-1/10 text-rose-300/40 text-xs font-light animate-float-delayed select-none">
+              ML/AI
+            </div>
+            <div className="absolute top-1/10 right-1/10 text-cyan-300/40 text-xs font-light animate-float-slow select-none">
+              NLP
+            </div>
+            <div className="absolute bottom-1/10 left-1/10 text-purple-300/40 text-xs font-light animate-float select-none">
+              API
+            </div>
+            <div className="absolute bottom-1/10 right-1/10 text-amber-300/40 text-xs font-light animate-float-delayed select-none">
+              SDK
+            </div>
           </div>
         </div>
 

@@ -27,6 +27,13 @@ export interface Client {
   nextRenewal?: string;
 }
 
+export interface CommunicationSuggestion {
+  type: 'email' | 'sms' | 'call';
+  subject: string;
+  content: string;
+  timing: string;
+}
+
 export interface Summary {
   total: number;
   byStatus: {

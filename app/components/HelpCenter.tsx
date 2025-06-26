@@ -11,12 +11,7 @@ interface DocumentSection {
   category: 'knowledge-base' | 'help-center' | 'tutorials';
 }
 
-interface HelpCenterProps {
-  // Reserved for future expansion - keeping interface for consistency
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-}
-
-export function HelpCenter(props: HelpCenterProps) {
+export function HelpCenter() {
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 

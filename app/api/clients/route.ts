@@ -1,15 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllClients, getClientById, addClient, updateClient, deleteClient } from '../../../lib/clientData';
+import { ClientDatabase, getCurrentUserId } from '../../../lib/database';
 
 export async function GET(request: NextRequest) {
   try {
+    // Get current user
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const health = searchParams.get('health');
     const sortBy = searchParams.get('sortBy') || 'name';
     const sortOrder = searchParams.get('sortOrder') || 'asc';
 
-    let clients = getAllClients();
+    let clients = await ClientDatabase.getAllClients(userId);
 
     // Apply filters
     if (status && status !== 'all') {
@@ -81,12 +90,21 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Get current user
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { action, clientId, clientData } = body;
 
     if (action === 'get') {
       // Get specific client details
-      const client = getClientById(clientId);
+      const client = await ClientDatabase.getClientById(clientId, userId);
       if (!client) {
         return NextResponse.json(
           { success: false, error: 'Client not found' },
@@ -105,7 +123,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const newClient = addClient({
+      const newClient = await ClientDatabase.createClient({
         name: clientData.name,
         email: clientData.email,
         company: clientData.company,
@@ -123,7 +141,7 @@ export async function POST(request: NextRequest) {
         notes: clientData.notes || '',
         contractValue: clientData.contractValue || 0,
         nextRenewal: clientData.nextRenewal,
-      });
+      }, userId);
 
       return NextResponse.json({ success: true, client: newClient });
     }
@@ -137,7 +155,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const updatedClient = updateClient(clientId, clientData);
+      const updatedClient = await ClientDatabase.updateClient(clientId, clientData, userId);
       if (!updatedClient) {
         return NextResponse.json(
           { success: false, error: 'Client not found' },
@@ -157,7 +175,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const deleted = deleteClient(clientId);
+      const deleted = await ClientDatabase.deleteClient(clientId, userId);
       if (!deleted) {
         return NextResponse.json(
           { success: false, error: 'Client not found' },
