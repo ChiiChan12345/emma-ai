@@ -84,7 +84,7 @@ export default function SignUp() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${location.origin}/auth/callback`
+          redirectTo: `${process.env.NEXTAUTH_URL || location.origin}/auth/callback`
         }
       })
       
